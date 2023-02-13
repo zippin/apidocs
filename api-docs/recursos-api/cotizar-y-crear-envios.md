@@ -689,6 +689,295 @@ Identificador de clasificación de producto. Si lo omites o indicas 1 (General) 
 
 </details>
 
+### Respuesta de cotización
+
+La respuesta de la cotización incluirá los siguientes elementos:
+
+<details>
+
+<summary>destination</summary>
+
+Describe la localidad/comuna/ciudad de destino que fue identificada según los datos suministrados en el request.
+
+</details>
+
+<details>
+
+<summary>packages</summary>
+
+Sirve como referencia para entender cómo se construyeron los paquetes que conforman el envío.&#x20;
+
+Si al cotizar indicaste paquetes, reflejará la misma información del request.&#x20;
+
+En cambio, si indicaste items, aquí te mostrará cómo han sido agrupados esos items en paquetes.
+
+</details>
+
+<details>
+
+<summary>results/all_results</summary>
+
+Aquí estarán las distintas opciones para poder realizar un envío.&#x20;
+
+En el objeto `results` tendrás un solo resultado ganador por cada `service_type` (forma de entrega).
+
+En el objeto `all_results` tendrás todos los resultados disponibles.
+
+</details>
+
+#### Atributos de un result
+
+| Atributo       | Descripción                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| service\_type  | <p>Tipo de servicio: la forma de entrega del envío.<br>El atributo <code>code</code> deberá ser usado al crear el envío (ej. standard_delivery)</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| logistic\_type | Modo de despacho: cómo se va a despachar el envío                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| carrier        | El transporte que hace la entrega. El atributo `id` deberá ser usado para crear el envío.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| delivery\_time | <p>Indica el tiempo de entrega.<br><code>estimated_delivery</code> indica la fecha máxima de entrega<br><code>estimation_expires_at</code> indica cuando vence la estimación<br>times: indica distintos tiempos del proceso de entrega, en formato ISO8601 de duración.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| amounts        | <p>Indica aspectos del precio del envío.<br><code>price</code> es el precio sin IVA que debe pagar el comprador<br><code>price_incl_tax</code> es el precio con IVA que debe pagar el comprador<br><code>seller_price</code> es el precio sin IVA que paga el vendedor<br><code>seller_price_incl_tax</code> es el precio con IVA que paga el vendedor<br><code>price_shipment</code> refleja la porción del precio del envío que es pura del envío<br><code>price_insurance</code> refleja la porción del precio del envío que corresponde al seguro y depende del valor declarado.<br></p><p><code>price</code> y <code>seller_price</code> por lo general son lo mismo, salvo en algunos casos:</p><ul><li>Cuando el resultado es de Flota Propia o Contrato Propio, el <code>price</code> refleja el precio de la tarifa y <code>seller_price</code> lo que cobra Zippin.</li><li>Cuando haya una regla que modifiquen el precio del envio, esa modificación se ve reflejada en <code>price</code>, mientras que <code>seller_price</code> mantiene el valor original.</li></ul> |
+| pickup\_points | <p>Es un array con puntos habilitados para la entrega del envío, cuando el tipo de servicio es <code>pickup_point</code>.<br>De cada punto es importante obtener el <code>point_id</code>, que deberá ser enviado al crear el envío para indicar la sucursal de entrega.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+
+<details>
+
+<summary>Ejemplo</summary>
+
+```json
+{
+	"sorted_by": "price",
+	"destination": {
+		"id": 8013
+		"city": "Formosa",
+		"state": "Formosa",
+		"country": "Argentina",
+		"zipcode": "3600",
+		"geolocation": {
+			"lat": -26.1828223,
+			"lng": -58.1733931
+		}
+	},
+	"declared_value": 864.7,
+	"packages": [
+		{
+			"descriptions": null,
+			"weight": 38000,
+			"height": 20,
+			"width": 50,
+			"length": 30,
+			"volume": 30000,
+			"sku_id": null,
+			"classification_id": 1,
+			"items": [],
+			"container": null
+		}
+	],
+	"results": {
+		"standard_delivery": {
+			"selectable": true,
+			"impediments": null,
+			"logistic_type": "carrier_dropoff",
+			"carrier": {
+				"id": 1,
+				"name": "Andreani",
+				"rating": 1,
+				"logo": "https:\/\/zippin-ar.s3.amazonaws.com\/carriers\/andreani-personalizado\/sIIX6bZ0AHNjq6a4mN41P4wqnDyEa88iFQio1lkW.png"
+			},
+			"service_type": {
+				"id": 1,
+				"code": "standard_delivery",
+				"name": "Entrega a domicilio",
+				"is_urgent": 0
+			},
+			"delivery_time": {
+				"warning": "Dear developer, min and max attributes will be deprecated soon. Use provided estimation date or times",
+				"min": 5,
+				"max": 7,
+				"estimated_delivery": "2023-02-23T23:00:00+00:00",
+				"estimation_expires_at": "2023-02-14T19:00:00+00:00",
+				"times": {
+					"preparation": "P1DT10H",
+					"crossdocking": "PT0S",
+					"carrier": {
+						"min": "P3D",
+						"max": "P5D",
+						"unadjusted": null
+					},
+					"total": {
+						"min": "P4DT10H",
+						"max": "P6DT10H"
+					}
+				}
+			},
+			"amounts": {
+				"price_shipment": 2830.01,
+				"price_insurance": 12.97,
+				"price": 2842.98,
+				"price_incl_tax": 3440,
+				"seller_price": 2842.98,
+				"seller_price_incl_tax": 3440
+			},
+			"rate": {
+				"source": "tariff",
+				"id": null,
+				"tariff_id": 2112
+			},
+			"tags": []
+		},
+		"pickup_point": {
+			"selectable": true,
+			"impediments": null,
+			"logistic_type": "carrier_dropoff",
+			"carrier": {
+				"id": 1,
+				"name": "Andreani",
+				"rating": 1,
+				"logo": "https:\/\/zippin-ar.s3.amazonaws.com\/carriers\/andreani-personalizado\/sIIX6bZ0AHNjq6a4mN41P4wqnDyEa88iFQio1lkW.png"
+			},
+			"service_type": {
+				"id": 9,
+				"code": "pickup_point",
+				"name": "Entrega en punto de entrega",
+				"is_urgent": 0
+			},
+			"delivery_time": {
+				"warning": "Dear developer, min and max attributes will be deprecated soon. Use provided estimation date or times",
+				"min": 5,
+				"max": 7,
+				"estimated_delivery": "2023-02-23T23:00:00+00:00",
+				"estimation_expires_at": "2023-02-14T19:00:00+00:00",
+				"times": {
+					"preparation": "P1DT10H",
+					"crossdocking": "PT0S",
+					"carrier": {
+						"min": "P3D",
+						"max": "P5D",
+						"unadjusted": null
+					},
+					"total": {
+						"min": "P4DT10H",
+						"max": "P6DT10H"
+					}
+				}
+			},
+			"amounts": {
+				"price_shipment": 2149.01,
+				"price_insurance": 12.97,
+				"price": 2161.98,
+				"price_incl_tax": 2616,
+				"seller_price": 2161.98,
+				"seller_price_incl_tax": 2616
+			},
+			"rate": {
+				"source": "tariff",
+				"id": null,
+				"tariff_id": 2113
+			},
+			"tags": [
+				"cheapest"
+			],
+			"pickup_points": [
+				{
+					"point_id": 14677,
+					"description": "Andreani - Formosa (Centro)",
+					"open_hours": null,
+					"phone": "0810-122-1111",
+					"location": {
+						"street": "Saavedra",
+						"street_number": "423",
+						"street_extras": null,
+						"city": "Formosa",
+						"state": "Formosa",
+						"geolocation": {
+							"lat": -26.18125,
+							"lng": -58.16975,
+							"distance": 400
+						}
+					}
+				}
+			]
+		}
+	},
+	"all_results": [
+		{
+			"selectable": true,
+			"impediments": null,
+			"logistic_type": "carrier_dropoff",
+			"carrier": {
+				"id": 1,
+				"name": "Andreani",
+				"rating": 1,
+				"logo": "https:\/\/zippin-ar.s3.amazonaws.com\/carriers\/andreani-personalizado\/sIIX6bZ0AHNjq6a4mN41P4wqnDyEa88iFQio1lkW.png"
+			},
+			"service_type": {
+				"id": 9,
+				"code": "pickup_point",
+				"name": "Entrega en punto de entrega",
+				"is_urgent": 0
+			},
+			"delivery_time": {
+				"warning": "Dear developer, min and max attributes will be deprecated soon. Use provided estimation date or times",
+				"min": 5,
+				"max": 7,
+				"estimated_delivery": "2023-02-23T23:00:00+00:00",
+				"estimation_expires_at": "2023-02-14T19:00:00+00:00",
+				"times": {
+					"preparation": "P1DT10H",
+					"crossdocking": "PT0S",
+					"carrier": {
+						"min": "P3D",
+						"max": "P5D",
+						"unadjusted": null
+					},
+					"total": {
+						"min": "P4DT10H",
+						"max": "P6DT10H"
+					}
+				}
+			},
+			"amounts": {
+				"price_shipment": 2149.01,
+				"price_insurance": 12.97,
+				"price": 2161.98,
+				"price_incl_tax": 2616,
+				"seller_price": 2161.98,
+				"seller_price_incl_tax": 2616
+			},
+			"rate": {
+				"source": "tariff",
+				"id": null,
+				"tariff_id": 2113
+			},
+			"tags": [
+				"cheapest"
+			],
+			"pickup_points": [
+				{
+					"point_id": 14677,
+					"description": "Andreani - Formosa (Centro)",
+					"open_hours": null,
+					"phone": "0810-122-1111",
+					"location": {
+						"street": "Saavedra",
+						"street_number": "423",
+						"street_extras": null,
+						"city": "Formosa",
+						"state": "Formosa",
+						"geolocation": {
+							"lat": -26.18125,
+							"lng": -58.16975,
+							"distance": 400
+						}
+					}
+				}
+			]
+		}
+		
+	]
+}
+```
+
+</details>
+
+
+
 ## Crear envíos
 
 {% hint style="info" %}
