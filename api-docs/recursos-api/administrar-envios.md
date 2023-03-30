@@ -275,6 +275,42 @@ ID del envío a despachar
 {% endswagger-response %}
 {% endswagger %}
 
+## Edición de envíos
+
+Podrás actualizar algunos aspectos del envío luego de creado.
+
+{% hint style="warning" %}
+Actualmente solo es posible editar el atributo de external\_id, siempre y cuando el envío aun no haya sido despachado.&#x20;
+
+Al hacer la modificación, **se reseteará el estado** del envío a Pendiente de Preparación y habrá que **volver a descargar la documentación** de despacho, si ya se hubiera hecho.
+{% endhint %}
+
+{% swagger method="put" path="/shipments/{shipment_id}" baseUrl="/v2" summary="Editar un envío" %}
+{% swagger-description %}
+
+{% endswagger-description %}
+
+{% swagger-parameter in="path" name="shipment_id" type="int" required="true" %}
+ID del envío
+{% endswagger-parameter %}
+
+{% swagger-parameter in="path" name="external_id" type="string" %}
+ID externo del envío. Solo admite letras, números y guiones.
+{% endswagger-parameter %}
+
+{% swagger-response status="200: OK" description="Envío modificado" %}
+```javascript
+{
+        "shipment_id": 123456,
+        "success": true,
+        "result": {
+                "external_id": "new_external-id"
+                }
+    }
+```
+{% endswagger-response %}
+{% endswagger %}
+
 ## Documentación de despacho
 
 La documentación de despacho está compuesta de una etiqueta por cada paquete del envío, y dependiendo del transporte, una guía de despacho.
