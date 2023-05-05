@@ -10,6 +10,7 @@
   * [Administrar envíos](api-docs/recursos-api/administrar-envios.md)
   * [Configuración](api-docs/recursos-api/configuracion.md)
   * [Inventario](api-docs/recursos-api/inventario.md)
+  * [Ubicaciones](api-docs/recursos-api/ubicaciones.md)
 
 ## Referencia
 
