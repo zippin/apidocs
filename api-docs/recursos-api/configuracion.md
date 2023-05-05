@@ -416,8 +416,9 @@ Actualmente, los tópicos a los que te puedes suscribir son:
 
 * `status`: Se dispara cuando hay un cambio de estado en un envío&#x20;
 * `shipment`: Se dispara cuando hay cualquier modificación en un envío&#x20;
-* `account`: Se dispara cuando hay una modificacion en los datos o preferencias de una cuenta&#x20;
+* `account`: Se dispara cuando hay una modificación en los datos o preferencias de una cuenta&#x20;
 * `account_balance`: Se dispara cuando hay un cambio en el saldo de la cuenta
+* `stock`: Se dispara cuando hay un cambio en el stock de un SKU
 
 {% swagger method="get" path="/accounts/{account_id}/webhooks" baseUrl="/v2" summary="Listar Webhooks" %}
 {% swagger-description %}
