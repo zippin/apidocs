@@ -285,12 +285,8 @@ MX: estado (ej. Distrito Federal)
 Radio de la zona de búsqueda para filtrado (en metros)
 {% endswagger-parameter %}
 
-{% swagger-parameter in="query" type="int" name="total_weight" %}
-Peso total en gramos que acepte los carrier para el filtrado
-{% endswagger-parameter %}
-
 {% swagger-parameter in="body" name="carrier_id" type="int" %}
-id del transporte a filtrar
+ID del transporte a filtrar
 {% endswagger-parameter %}
 
 {% swagger-parameter in="body" name="packages" type="array" required="true" %}
@@ -303,15 +299,15 @@ Mínimo un package
 Peso del paquete, en gramos
 {% endswagger-parameter %}
 
-{% swagger-parameter in="body" name="packages.*.height" type="int" %}
+{% swagger-parameter in="body" name="packages.*.height" type="int" required="true" %}
 Alto del paquete, en cm.
 {% endswagger-parameter %}
 
-{% swagger-parameter in="body" name="packages.*.length" type="int" %}
+{% swagger-parameter in="body" name="packages.*.length" type="int" required="true" %}
 Largo del paquete, en cm.
 {% endswagger-parameter %}
 
-{% swagger-parameter in="body" name="packages.*.width" type="int" %}
+{% swagger-parameter in="body" name="packages.*.width" type="int" required="true" %}
 Ancho del paquete, en cm.
 {% endswagger-parameter %}
 
