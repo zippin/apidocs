@@ -81,11 +81,11 @@ Array de objetos item. Minimo 1 item, maximo 1000 items.
 Ten en cuenta que más allá de la cantidad de items, un envío no puede resultar en más de 99 paquetes.
 {% endswagger-parameter %}
 
-{% swagger-parameter in="body" name="items.*.sku" type="string" required="true" %}
+{% swagger-parameter in="body" name="items.*.sku" type="string (190)" required="true" %}
 Se intentará vincular a un producto cargado en el catalogo de Zippin, en base al código de referencia de los productos.
 {% endswagger-parameter %}
 
-{% swagger-parameter in="body" name="items.*.description" type="string" %}
+{% swagger-parameter in="body" name="items.*.description" type="string (190)" %}
 Titulo o descripcion del producto
 {% endswagger-parameter %}
 
@@ -93,20 +93,22 @@ Titulo o descripcion del producto
 Peso, en gramos, del item
 {% endswagger-parameter %}
 
-{% swagger-parameter in="body" name="items.*.length" required="true" %}
+{% swagger-parameter in="body" name="items.*.length" required="true" type="int" %}
 Largo, en centimetros
 {% endswagger-parameter %}
 
-{% swagger-parameter in="body" name="items.*.height" required="true" %}
+{% swagger-parameter in="body" name="items.*.height" required="true" type="int" %}
 Alto, en centimetros
 {% endswagger-parameter %}
 
-{% swagger-parameter in="body" name="items.*.width" required="true" %}
+{% swagger-parameter in="body" name="items.*.width" required="true" type="int" %}
 Ancho, en centimetros
 {% endswagger-parameter %}
 
 {% swagger-parameter in="body" name="items.*.classification_id" type="int" %}
 Identificador de clasificación de producto. Si lo omites o indicas 1 (General) intentaremos clasificarlo automaticamente segun la descripcion.
+
+[Ver Clasificaciones de producto](../../referencia/clasificaciones-de-producto.md)
 {% endswagger-parameter %}
 
 {% swagger-parameter in="body" name="type_packaging" %}
@@ -425,15 +427,15 @@ No requerido en Chile ni Colombia.
 Array de objetos package. Minimo 1 package, maximo 99.
 {% endswagger-parameter %}
 
-{% swagger-parameter in="body" name="packages.*.description_1" type="string" required="true" %}
+{% swagger-parameter in="body" name="packages.*.description_1" type="string (60)" required="true" %}
 Titulo o descripcion del producto
 {% endswagger-parameter %}
 
-{% swagger-parameter in="body" name="packages.*.description_2" type="string" %}
+{% swagger-parameter in="body" name="packages.*.description_2" type="string (60)" %}
 Info adicional del producto
 {% endswagger-parameter %}
 
-{% swagger-parameter in="body" name="packages.*.description_3" type="string" %}
+{% swagger-parameter in="body" name="packages.*.description_3" type="string (60)" %}
 Info adicional del producto
 {% endswagger-parameter %}
 
@@ -441,20 +443,22 @@ Info adicional del producto
 Peso, en gramos, del item
 {% endswagger-parameter %}
 
-{% swagger-parameter in="body" name="packages.*.length" required="true" %}
+{% swagger-parameter in="body" name="packages.*.length" required="true" type="int" %}
 Largo, en centimetros
 {% endswagger-parameter %}
 
-{% swagger-parameter in="body" name="packages.*.height" required="true" %}
+{% swagger-parameter in="body" name="packages.*.height" required="true" type="int" %}
 Alto, en centimetros
 {% endswagger-parameter %}
 
-{% swagger-parameter in="body" name="packages.*.width" required="true" %}
+{% swagger-parameter in="body" name="packages.*.width" required="true" type="int" %}
 Ancho, en centimetros
 {% endswagger-parameter %}
 
 {% swagger-parameter in="body" name="packages.*.classification_id" type="int" %}
 Identificador de clasificación de producto. Si lo omites o indicas 1 (General) intentaremos clasificarlo automaticamente segun la descripcion.
+
+[Ver Clasificaciones de producto](../../referencia/clasificaciones-de-producto.md)
 {% endswagger-parameter %}
 
 {% swagger-response status="200: OK" description="Una respuesta correcta contendrá este detalle." %}
@@ -727,14 +731,7 @@ En el objeto `all_results` tendrás todos los resultados disponibles.
 
 #### Atributos de un result
 
-| Atributo       | Descripción                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| service\_type  | <p>Tipo de servicio: la forma de entrega del envío.<br>El atributo <code>code</code> deberá ser usado al crear el envío (ej. standard_delivery)</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| logistic\_type | Modo de despacho: cómo se va a despachar el envío                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| carrier        | El transporte que hace la entrega. El atributo `id` deberá ser usado para crear el envío.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| delivery\_time | <p>Indica el tiempo de entrega.<br><code>estimated_delivery</code> indica la fecha máxima de entrega<br><code>estimation_expires_at</code> indica cuando vence la estimación<br>times: indica distintos tiempos del proceso de entrega, en formato ISO8601 de duración.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| amounts        | <p>Indica aspectos del precio del envío.<br><code>price</code> es el precio sin IVA que debe pagar el comprador<br><code>price_incl_tax</code> es el precio con IVA que debe pagar el comprador<br><code>seller_price</code> es el precio sin IVA que paga el vendedor<br><code>seller_price_incl_tax</code> es el precio con IVA que paga el vendedor<br><code>price_shipment</code> refleja la porción del precio del envío que es pura del envío<br><code>price_insurance</code> refleja la porción del precio del envío que corresponde al seguro y depende del valor declarado.<br></p><p><code>price</code> y <code>seller_price</code> por lo general son lo mismo, salvo en algunos casos:</p><ul><li>Cuando el resultado es de Flota Propia o Contrato Propio, el <code>price</code> refleja el precio de la tarifa y <code>seller_price</code> lo que cobra Zippin.</li><li>Cuando haya una regla que modifiquen el precio del envio, esa modificación se ve reflejada en <code>price</code>, mientras que <code>seller_price</code> mantiene el valor original.</li></ul> |
-| pickup\_points | <p>Es un array con puntos habilitados para la entrega del envío, cuando el tipo de servicio es <code>pickup_point</code>.<br>De cada punto es importante obtener el <code>point_id</code>, que deberá ser enviado al crear el envío para indicar la sucursal de entrega.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+<table><thead><tr><th width="164">Atributo</th><th>Descripción</th></tr></thead><tbody><tr><td>service_type</td><td>Tipo de servicio: la forma de entrega del envío.<br>El atributo <code>code</code> deberá ser usado al crear el envío (ej. standard_delivery)</td></tr><tr><td>logistic_type</td><td>Modo de despacho: cómo se va a despachar el envío</td></tr><tr><td>carrier</td><td>El transporte que hace la entrega. El atributo <code>id</code> deberá ser usado para crear el envío.</td></tr><tr><td>delivery_time</td><td>Indica el tiempo de entrega.<br><code>estimated_delivery</code> indica la fecha máxima de entrega<br><code>estimation_expires_at</code> indica cuando vence la estimación<br>times: indica distintos tiempos del proceso de entrega, en formato ISO8601 de duración.</td></tr><tr><td>amounts</td><td><p>Indica aspectos del precio del envío.<br><code>price</code> es el precio sin IVA que debe pagar el comprador<br><code>price_incl_tax</code> es el precio con IVA que debe pagar el comprador<br><code>seller_price</code> es el precio sin IVA que paga el vendedor<br><code>seller_price_incl_tax</code> es el precio con IVA que paga el vendedor<br><code>price_shipment</code> refleja la porción del precio del envío que es pura del envío<br><code>price_insurance</code> refleja la porción del precio del envío que corresponde al seguro y depende del valor declarado.<br></p><p><code>price</code> y <code>seller_price</code> por lo general son lo mismo, salvo en algunos casos:</p><ul><li>Cuando el resultado es de Flota Propia o Contrato Propio, el <code>price</code> refleja el precio de la tarifa y <code>seller_price</code> lo que cobra Zippin.</li><li>Cuando haya una regla que modifiquen el precio del envio, esa modificación se ve reflejada en <code>price</code>, mientras que <code>seller_price</code> mantiene el valor original.</li></ul></td></tr><tr><td>pickup_points</td><td>Es un array con puntos habilitados para la entrega del envío, cuando el tipo de servicio es <code>pickup_point</code>.<br>De cada punto es importante obtener el <code>point_id</code>, que deberá ser enviado al crear el envío para indicar la sucursal de entrega.</td></tr></tbody></table>
 
 <details>
 
@@ -1422,9 +1419,9 @@ En cada cotización, se deberá indicar la cuenta, valor declarado del envío y 
 Al hacer el request **hay algunas particularidades** con respecto a la definición de los paquetes e items que los componen que serán devueltos.
 
 * **Particularidades en la definición de paquetes a devolver**\
-  ****En caso de no indicar el array de  **packages** con los paquetes que contendrá la devolución. El sistema interpreta que se devolverán todos los paquetes del envío con todos sus items definidos. Si el array de paquetes esta definido solo se cotizará la devolución de los paquetes que contenga dicho array.
+  En caso de no indicar el array de  **packages** con los paquetes que contendrá la devolución. El sistema interpreta que se devolverán todos los paquetes del envío con todos sus items definidos. Si el array de paquetes esta definido solo se cotizará la devolución de los paquetes que contenga dicho array.
 * **Particularidades en la definición de items a devolver**\
-  ****Para cada paquete que se indique en el array de paquetes se deberá indicar que items se devolverán. En caso de no indicar el array de  **items** con los items que contendrán los paquetes de la devolución. El sistema interpreta que se devolverán todos los items del paquete indicado. Si el array de items esta definido dentro de un paquete solo se cotizará la devolución de los items que contenga dicho array.
+  Para cada paquete que se indique en el array de paquetes se deberá indicar que items se devolverán. En caso de no indicar el array de  **items** con los items que contendrán los paquetes de la devolución. El sistema interpreta que se devolverán todos los items del paquete indicado. Si el array de items esta definido dentro de un paquete solo se cotizará la devolución de los items que contenga dicho array.
 
 {% swagger method="post" path="/shipments/{id}/return/quote" baseUrl="/v2" summary="Cotizar devolución" %}
 {% swagger-description %}
@@ -1677,9 +1674,9 @@ En cada creación, se deberá indicar la cuenta, valor declarado del envío y de
 Al hacer el request **hay algunas particularidades** con respecto a la definición de los paquetes e items que los componen que serán devueltos.
 
 * **Particularidades en la definición de paquetes a devolver**\
-  ****En caso de no indicar el array de  **packages** con los paquetes que contendrá la devolución. El sistema interpreta que se devolverán todos los paquetes del envío con todos sus items definidos. Si el array de paquetes esta definido solo se creará la devolución de los paquetes que contenga dicho array.
+  En caso de no indicar el array de  **packages** con los paquetes que contendrá la devolución. El sistema interpreta que se devolverán todos los paquetes del envío con todos sus items definidos. Si el array de paquetes esta definido solo se creará la devolución de los paquetes que contenga dicho array.
 * **Particularidades en la definición de items a devolver**\
-  ****Para cada paquete que se indique en el array de paquetes se deberá indicar que items se devolverán. En caso de no indicar el array de  **items** con los items que contendrán los paquetes de la devolución. El sistema interpreta que se devolverán todos los items del paquete indicado. Si el array de items esta definido dentro de un paquete solo se creará la devolución de los items que contenga dicho array.
+  Para cada paquete que se indique en el array de paquetes se deberá indicar que items se devolverán. En caso de no indicar el array de  **items** con los items que contendrán los paquetes de la devolución. El sistema interpreta que se devolverán todos los items del paquete indicado. Si el array de items esta definido dentro de un paquete solo se creará la devolución de los items que contenga dicho array.
 
 {% swagger method="post" path="/shipments/{id}/return" baseUrl="/v2" summary="Crear devolución" %}
 {% swagger-description %}
