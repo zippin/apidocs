@@ -209,6 +209,22 @@ Horario de apertura. Ej. "09:00"
 Horario de cierre. Ej. "18:00"
 {% endswagger-parameter %}
 
+{% swagger-parameter in="body" name="logistic_types" type="array" %}
+Array con los códigos de los logistic_types aceptados para este origen. Si se modifica, se debe enviar también 
+
+`default_logistic_type`
+
+.
+{% endswagger-parameter %}
+
+{% swagger-parameter in="body" name="default_logistic_type" type="string" %}
+Código del logistic_type por defecto. Es obligatorio si se modifican los 
+
+`logistic_types`
+
+.
+{% endswagger-parameter %}
+
 {% swagger-parameter in="body" name="options" type="object" required="true" %}
 
 {% endswagger-parameter %}
@@ -260,6 +276,11 @@ Cantidad de horas desde la creación para que un envío pase automáticamente a 
     "zipcode": "1646",
     "phone": "119922444",
     "email": "sanfernando@tienda.com.ar",
+    "logistic_types":[
+                        "crossdock",
+                        "carrier_pickup"
+                    ],
+    "default_logistic_type": "crossdock",
     "hours": {
         "open": "08:00",
         "close": "16:00"
