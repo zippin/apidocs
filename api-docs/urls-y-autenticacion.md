@@ -4,6 +4,13 @@
 
 Todos los requests deben utilizar autenticación.&#x20;
 
+Existen actualmente dos métodos de autenticarse:
+
+* Autenticación básica HTTP usando un API token y API secret, generados en la cuenta a la que se quiere acceder.
+* Mediante un access\_token, obtenido a través de un flujo de Oauth2.
+
+### Generación de credenciales para autenticación básica
+
 Para generar tus credenciales debes ingresar a la cuenta de Zippin que estás integrando y acceder a la sección **Configuración > Integraciones > Gestionar credenciales y webhooks**
 
 Allí, podrás crear un nuevo token de cuenta, el cual consiste en un **API Token** y un **API Secret.**
@@ -11,11 +18,17 @@ Allí, podrás crear un nuevo token de cuenta, el cual consiste en un **API Toke
 {% hint style="info" %}
 Tus requests deberán utilizar [**autenticación básica de HTTP**](https://es.wikipedia.org/wiki/Autenticaci%C3%B3n\_de\_acceso\_b%C3%A1sica)**.**
 
-**Usuario:** API Token **** \
+**Usuario:** API Token \
 **Contraseña:** API Secret
 {% endhint %}
 
 Si la librería que estás usando no acepta que se le indique un usuario y contraseña de autenticación básica deberás contruir manualmente el header Authorization [como se indica en esta guía](https://diego.com.es/autenticacion-http).
+
+### Autenticación con access\_token
+
+Deberás enviar un Bearer token en cada request. Tendrás un access\_token por cada cuenta de Zippin que te autorice el acceso.
+
+Para ver cómo obtener y refrescar los tokens, revisa la ayuda sobre la autenticación con Oauth2.
 
 ## Headers obligatorios
 
