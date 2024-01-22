@@ -28,18 +28,8 @@ Ejemplo: <mark style="color:red;">`external_id=DJDSJCMR`</mark>
 {% endswagger-parameter %}
 
 {% swagger-parameter in="query" name="order_id" type="string" %}
-Filtrar envíos por el ID visible de una venta relacionada de un canal integrada.
-
-\
-
-
-Ejemplo: 
-
-<mark style="color:red;">
-
-`order_id=200000334445566`
-
-</mark>
+Filtrar envíos por el ID visible de una venta relacionada de un canal integrada.\
+Ejemplo: <mark style="color:red;">`order_id=200000334445566`</mark>
 {% endswagger-parameter %}
 
 {% swagger-parameter in="query" name="service_type" required="false" type="string" %}

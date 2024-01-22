@@ -21,3 +21,10 @@
 ## Soporte
 
 * [Solicitar ayuda](soporte/solicitar-ayuda.md)
+
+## Marketplaces
+
+* [Zippin para Marketplaces](marketplaces/zippin-para-marketplaces.md)
+* [Conexión de cuentas](marketplaces/conexion-de-cuentas.md)
+* [Cotización y creación de ordenes](marketplaces/cotizacion-y-creacion-de-ordenes.md)
+* [Gestión de ordenes y envíos](marketplaces/gestion-de-ordenes-y-envios.md)
