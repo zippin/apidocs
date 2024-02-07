@@ -8,6 +8,10 @@ En Zippin existen múltiples maneras de hacer un envío, combinando diferentes *
 
 En los resultados de cotización verás todas las opciones disponibles en tu cuenta para hacer el envío, con los distintos transportes disponibles.
 
+{% hint style="info" %}
+Recomendamos completar el atributo `source` con algo que identifique a tu integración, para que luego los clientes puedan definir reglas personalizadas de cotización utilizando el [Motor de Reglas](https://ayuda.zippin.app/automatizaciones), utilizando el atributo source como criterio de filtrado.
+{% endhint %}
+
 #### Cotizar Por Items
 
 Permite obtener opciones de despacho indicando un conjunto de productos a despachar. La API empaquetará los items en paquetes de acuerdo a la lógica definida en la cuenta, y teniendo en cuenta los contenedores configurados.
@@ -977,12 +981,16 @@ En el objeto `all_results` tendrás todos los resultados disponibles.
 
 ## Crear envíos
 
-{% hint style="info" %}
+{% hint style="warning" %}
 Al crear un envío necesitarás informar algunos datos que surgen de la cotización.&#x20;
 
 **Luego de cotizar, debes almacenar los valores de `logistic_type`, `service_type`, `carrier_id` de la opción de envío deseada, para luego utilizarlos al crear el envío.**
 
 Si se trata de un envio a retirar por sucursal, también debes almacenar el `point_id` de la ubicación donde se vaya a hacer el retiro del envío por el destinatario.
+{% endhint %}
+
+{% hint style="info" %}
+Recomendamos completar el atributo `source` con algo que identifique a tu integración, para que luego los clientes puedan definir reglas personalizadas de cotización utilizando el [Motor de Reglas](https://ayuda.zippin.app/automatizaciones), utilizando el atributo source como criterio de filtrado.
 {% endhint %}
 
 #### Crear por items
