@@ -39,8 +39,14 @@ ID de la cuenta del seller
 ID del envío en tus sistemas. Es para tu propia referencia.
 {% endswagger-parameter %}
 
+{% swagger-parameter in="body" name="channel" type="string" required="true" %}
+Identificación del canal. En caso de marketplace, utiliza el prefijo `marketplace:`
+
+Por ejemplo: `marketplace:amazon`
+{% endswagger-parameter %}
+
 {% swagger-parameter in="body" name="source" type="string (150)" required="true" %}
-Utilizado para identificar el canal de venta.
+Utilizado para identificar la integración.
 {% endswagger-parameter %}
 
 {% swagger-parameter in="body" name="created_at" required="true" type="timestamp" %}
