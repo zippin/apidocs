@@ -242,7 +242,69 @@ Alto del artículo, en centímetros.
 {% swagger-response status="201: Created" description="La orden se crea correctamente." %}
 ```javascript
 {
-    // Detalle del orden creado
+	"id": 22736208,
+	"account_id": 2,
+	"channel": {
+		"type": "marketplace",
+		"marketplace": "marketplace_code",
+		"created_at": "2024-03-01T16:42:02+00:00",
+		"paid_at": "2024-03-01T16:42:02+00:00",
+		"data": null
+	},
+	"completed_at": null,
+	"shipment_requested_at": null,
+	"saved_origin_id": 343693,
+	"logistic_type": null,
+	"carrier_id": null,
+	"service_type_id": null,
+	"destination": {
+		"id": 25235248,
+		"saved_address_id": null,
+		"name": "Marco Niccolini",
+		"street": "Marconi",
+		"street_number": "3055",
+		"street_extras": "Piso 3",
+		"zipcode": "1643",
+		"phone": "1168198894",
+		"email": "juan@hotmail.com",
+		"document": "11111111",
+		"city": {
+			"id": 260,
+			"name": "Beccar"
+		},
+		"state": {
+			"id": 2,
+			"name": "Buenos Aires"
+		},
+		"country": {
+			"id": 1,
+			"name": "Argentina"
+		},
+		"location_latitude": "-34.4791165",
+		"location_longitude": "-58.5701005",
+		"location_type": "ROOFTOP",
+		"location_metadata": null,
+		"is_accurate": true,
+		"created_at": "2024-03-01T16:42:03.000000Z",
+		"updated_at": "2024-03-01T16:42:03.000000Z",
+		"confirmed_at": null
+	},
+	"items": [
+		{
+			"id": 25226018,
+			"qty": 2,
+			"unit_price": 0,
+			"currency": "ARS",
+			"product_id": null,
+			"data": null
+		}
+	],
+	"total_paid_amount": 12345.67,
+	"total_shipping_paid_amount": 300,
+	"currency": null,
+	"tags": [],
+	"created_at": "2024-03-01T16:42:03+00:00",
+	"updated_at": "2024-03-01T16:42:04+00:00"
 }
 ```
 
