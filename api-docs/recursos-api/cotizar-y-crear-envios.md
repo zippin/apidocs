@@ -2,6 +2,11 @@
 
 ## Cotizar
 
+{% hint style="warning" %}
+Los endpoints de cotización utilizan **rate limiting** :orange\_circle:<mark style="color:orange;">**Medio**</mark>\
+[Ver más sobre límites de requests](../limites-de-requests.md)
+{% endhint %}
+
 La cotización es el proceso mediante el cual se obtienen opciones para hacer un envío.
 
 En Zippin existen múltiples maneras de hacer un envío, combinando diferentes **formas de despacho** (`logistic_type`) y **formas de entrega** (`service_type`).
@@ -16,119 +21,37 @@ Recomendamos completar el atributo `source` con algo que identifique a tu integr
 
 Permite obtener opciones de despacho indicando un conjunto de productos a despachar. La API empaquetará los items en paquetes de acuerdo a la lógica definida en la cuenta, y teniendo en cuenta los contenedores configurados.
 
-{% swagger method="post" path="/shipments/quote" baseUrl="/v2" summary="Cotización de un envío en base a items (recomendado)" %}
-{% swagger-description %}
+## Cotización de un envío en base a items (recomendado)
+
+<mark style="color:green;">`POST`</mark> `/v2/shipments/quote`
+
 Este request te permitirá obtener cotizaciones de envíos indicando los articulos que son parte del despacho. El sistema los agrupará en paquetes automáticamente, según las reglas definidas en la cuenta.
-{% endswagger-description %}
 
-{% swagger-parameter in="body" name="account_id" type="int" required="true" %}
-ID de la cuenta
-{% endswagger-parameter %}
+#### Request Body
 
-{% swagger-parameter in="body" name="origin_id" type="int" required="true" %}
-ID del origen
-{% endswagger-parameter %}
+| Name                                                  | Type         | Description                                                                                                                                                                                                                                                                                                                               |
+| ----------------------------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| account\_id<mark style="color:red;">\*</mark>         | int          | ID de la cuenta                                                                                                                                                                                                                                                                                                                           |
+| origin\_id<mark style="color:red;">\*</mark>          | int          | ID del origen                                                                                                                                                                                                                                                                                                                             |
+| declared\_value<mark style="color:red;">\*</mark>     | float        | Valor declarado total del contenido. Monto que se utilizará para el seguro. Si no se va a asegurar el contenido, se puede indicar el valor 0.                                                                                                                                                                                             |
+| destination<mark style="color:red;">\*</mark>         | object       | Objeto destination                                                                                                                                                                                                                                                                                                                        |
+| destination.city<mark style="color:red;">\*</mark>    | string       | <p>Nombre de la ciudad del domicilio del destinatario.</p><p>AR: localidad (ej. Avellaneda)</p><p>CL: comuna (ej. Las Condes)</p><p>CO: ciudad (ej. Usaquén)</p><p>MX: colonia (ej. Polanco)</p>                                                                                                                                          |
+| destination.state<mark style="color:red;">\*</mark>   | string       | <p>Nombre del Estado del domicilio del destinatario.</p><p>AR: provincia (ej. Buenos Aires)</p><p>CL: región (ej. RM)</p><p>CO: departamento  (ej. Bogotá DC)</p><p>MX: estado (ej. Distrito Federal)</p>                                                                                                                                 |
+| destination.zipcode<mark style="color:red;">\*</mark> | string       | <p>Código postal. </p><p>No requerido en Chile ni Colombia.</p>                                                                                                                                                                                                                                                                           |
+| items<mark style="color:red;">\*</mark>               | array\[item] | <p>Array de objetos item. Minimo 1 item, maximo 1000 items.</p><p>Ten en cuenta que más allá de la cantidad de items, un envío no puede resultar en más de 99 paquetes.</p>                                                                                                                                                               |
+| items.\*.sku<mark style="color:red;">\*</mark>        | string (190) | Se intentará vincular a un producto cargado en el catalogo de Zippin, en base al código de referencia de los productos.                                                                                                                                                                                                                   |
+| items.\*.description                                  | string (190) | Titulo o descripcion del producto                                                                                                                                                                                                                                                                                                         |
+| items.\*.weight<mark style="color:red;">\*</mark>     | int          | Peso, en gramos, del item                                                                                                                                                                                                                                                                                                                 |
+| items.\*.length<mark style="color:red;">\*</mark>     | int          | Largo, en centimetros                                                                                                                                                                                                                                                                                                                     |
+| items.\*.height<mark style="color:red;">\*</mark>     | int          | Alto, en centimetros                                                                                                                                                                                                                                                                                                                      |
+| items.\*.width<mark style="color:red;">\*</mark>      | int          | Ancho, en centimetros                                                                                                                                                                                                                                                                                                                     |
+| items.\*.classification\_id                           | int          | <p>Identificador de clasificación de producto. Si lo omites o indicas 1 (General) intentaremos clasificarlo automaticamente segun la descripcion.</p><p><a href="../../referencia/clasificaciones-de-producto.md">Ver Clasificaciones de producto</a></p>                                                                                 |
+| destination.country                                   | string       | <p>Código ISO 3166-1 alfa-2 del país</p><p>Argentina: AR</p><p>Chile: CL</p><p>Colombia: CO</p><p>México: MX</p>                                                                                                                                                                                                                          |
+| type\_packaging                                       | String       | <p>Indica la forma de empaquetar los productos. Si se omite se usa el que tenga definido la cuenta por default.<br>Valores posible:<br><code>dynamic</code>: empaquetado dinámico<br><code>boxes</code>: usar cajas configuradas en la cuenta</p><p><code>none</code>: no empaquetar (cada item debe resultar en un package separado)</p> |
+| source                                                | string (150) | Utilizado en algunas integraciones para identificar el canal de venta.                                                                                                                                                                                                                                                                    |
 
-{% swagger-parameter in="body" name="declared_value" type="float" required="true" %}
-Valor declarado total del contenido. Monto que se utilizará para el seguro. Si no se va a asegurar el contenido, se puede indicar el valor 0.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination" type="object" required="true" %}
-Objeto destination
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.city" required="true" type="string" %}
-Nombre de la ciudad del domicilio del destinatario.
-
-AR: localidad (ej. Avellaneda)
-
-CL: comuna (ej. Las Condes)
-
-CO: ciudad (ej. Usaquén)
-
-MX: colonia (ej. Polanco)
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.state" type="string" required="true" %}
-Nombre del Estado del domicilio del destinatario.
-
-AR: provincia (ej. Buenos Aires)
-
-CL: región (ej. RM)
-
-CO: departamento  (ej. Bogotá DC)
-
-MX: estado (ej. Distrito Federal)
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.country" type="string" %}
-Código ISO 3166-1 alfa-2 del país
-
-Argentina: AR
-
-Chile: CL
-
-Colombia: CO
-
-México: MX
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.zipcode" type="string" required="true" %}
-Código postal.&#x20;
-
-No requerido en Chile ni Colombia.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items" type="array[item]" required="true" %}
-Array de objetos item. Minimo 1 item, maximo 1000 items.
-
-Ten en cuenta que más allá de la cantidad de items, un envío no puede resultar en más de 99 paquetes.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items.*.sku" type="string (190)" required="true" %}
-Se intentará vincular a un producto cargado en el catalogo de Zippin, en base al código de referencia de los productos.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items.*.description" type="string (190)" %}
-Titulo o descripcion del producto
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items.*.weight" type="int" required="true" %}
-Peso, en gramos, del item
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items.*.length" required="true" type="int" %}
-Largo, en centimetros
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items.*.height" required="true" type="int" %}
-Alto, en centimetros
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items.*.width" required="true" type="int" %}
-Ancho, en centimetros
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items.*.classification_id" type="int" %}
-Identificador de clasificación de producto. Si lo omites o indicas 1 (General) intentaremos clasificarlo automaticamente segun la descripcion.
-
-[Ver Clasificaciones de producto](../../referencia/clasificaciones-de-producto.md)
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="type_packaging" %}
-Indica la forma de empaquetar los productos. Si se omite se usa el que tenga definido la cuenta por default.\
-Valores posible:\
-`dynamic`: empaquetado dinámico\
-`boxes`: usar cajas configuradas en la cuenta
-
-`none`: no empaquetar (cada item debe resultar en un package separado)
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="source" type="string (150)" %}
-Utilizado en algunas integraciones para identificar el canal de venta.
-{% endswagger-parameter %}
-
-{% swagger-response status="200: OK" description="Una respuesta correcta contendrá este detalle." %}
+{% tabs %}
+{% tab title="200: OK Una respuesta correcta contendrá este detalle." %}
 ```javascript
 {
   "sorted_by": "price",
@@ -304,16 +227,16 @@ Utilizado en algunas integraciones para identificar el canal de venta.
   ]
 }
 ```
-{% endswagger-response %}
+{% endtab %}
 
-{% swagger-response status="400: Bad Request" description="Una respuesta erronea indicará detalladamente el motivo del error." %}
+{% tab title="400: Bad Request Una respuesta erronea indicará detalladamente el motivo del error." %}
 ```javascript
 {
     // Response
 }
 ```
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
 
 <details>
 
@@ -360,112 +283,37 @@ Permite obtener opciones de despacho indicando un conjunto de paquetes a despach
 
 La utilización de múltiples paquetes sirve para cuando en un mismo envío debes despachar múltiples bultos (por ejemplo si estás enviando un colchón y un sommier).
 
-{% swagger method="post" path="/shipments/quote" baseUrl="/v2" summary="Cotización de un envío en base a paquetes" %}
-{% swagger-description %}
+## Cotización de un envío en base a paquetes
+
+<mark style="color:green;">`POST`</mark> `/v2/shipments/quote`
+
 Este request te permitirá obtener cotizaciones de envíos indicando explícitamente los paquete que son parte del despacho.
-{% endswagger-description %}
 
-{% swagger-parameter in="body" name="account_id" type="int" required="true" %}
-ID de la cuenta
-{% endswagger-parameter %}
+#### Request Body
 
-{% swagger-parameter in="body" name="origin_id" type="int" required="true" %}
-ID del origen
-{% endswagger-parameter %}
+| Name                                                         | Type            | Description                                                                                                                                                                                                                                               |
+| ------------------------------------------------------------ | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| account\_id<mark style="color:red;">\*</mark>                | int             | ID de la cuenta                                                                                                                                                                                                                                           |
+| origin\_id<mark style="color:red;">\*</mark>                 | int             | ID del origen                                                                                                                                                                                                                                             |
+| declared\_value<mark style="color:red;">\*</mark>            | float           | Valor declarado total del contenido. Monto que se utilizará para el seguro. Si no se va a asegurar el contenido, se puede indicar el valor 0.                                                                                                             |
+| destination<mark style="color:red;">\*</mark>                | object          | Objeto destination                                                                                                                                                                                                                                        |
+| destination.city<mark style="color:red;">\*</mark>           | string          | <p>Nombre de la ciudad del domicilio del destinatario.</p><p>AR: localidad</p><p>CL: comuna</p><p>CO: ciudad</p><p>MX: colonia</p>                                                                                                                        |
+| destination.state<mark style="color:red;">\*</mark>          | string          | <p>Nombre del Estado del domicilio del destinatario.</p><p>AR: provincia</p><p>CL: región</p><p>CO: departamento</p><p>MX: estado</p>                                                                                                                     |
+| destination.zipcode<mark style="color:red;">\*</mark>        | string          | <p>Código postal. </p><p>No requerido en Chile ni Colombia.</p>                                                                                                                                                                                           |
+| packages<mark style="color:red;">\*</mark>                   | array\[package] | Array de objetos package. Minimo 1 package, maximo 99.                                                                                                                                                                                                    |
+| packages.\*.description\_1<mark style="color:red;">\*</mark> | string (60)     | Titulo o descripcion del producto                                                                                                                                                                                                                         |
+| packages.\*.weight<mark style="color:red;">\*</mark>         | int             | Peso, en gramos, del item                                                                                                                                                                                                                                 |
+| packages.\*.length<mark style="color:red;">\*</mark>         | int             | Largo, en centimetros                                                                                                                                                                                                                                     |
+| packages.\*.height<mark style="color:red;">\*</mark>         | int             | Alto, en centimetros                                                                                                                                                                                                                                      |
+| packages.\*.width<mark style="color:red;">\*</mark>          | int             | Ancho, en centimetros                                                                                                                                                                                                                                     |
+| packages.\*.classification\_id                               | int             | <p>Identificador de clasificación de producto. Si lo omites o indicas 1 (General) intentaremos clasificarlo automaticamente segun la descripcion.</p><p><a href="../../referencia/clasificaciones-de-producto.md">Ver Clasificaciones de producto</a></p> |
+| packages.\*.description\_2                                   | string (60)     | Info adicional del producto                                                                                                                                                                                                                               |
+| packages.\*.description\_3                                   | string (60)     | Info adicional del producto                                                                                                                                                                                                                               |
+| destination.country                                          | string          | <p>Código ISO 3166-1 alfa-2 del país</p><p>Argentina: AR</p><p>Chile: CL</p><p>Colombia: CO</p><p>México: MX</p>                                                                                                                                          |
+| source                                                       | string (150)    | Utilizado en algunas integraciones para identificar el canal de venta.                                                                                                                                                                                    |
 
-{% swagger-parameter in="body" name="declared_value" type="float" required="true" %}
-Valor declarado total del contenido. Monto que se utilizará para el seguro. Si no se va a asegurar el contenido, se puede indicar el valor 0.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="source" type="string (150)" %}
-Utilizado en algunas integraciones para identificar el canal de venta.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination" type="object" required="true" %}
-Objeto destination
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.city" required="true" type="string" %}
-Nombre de la ciudad del domicilio del destinatario.
-
-AR: localidad
-
-CL: comuna
-
-CO: ciudad
-
-MX: colonia
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.state" type="string" required="true" %}
-Nombre del Estado del domicilio del destinatario.
-
-AR: provincia
-
-CL: región
-
-CO: departamento
-
-MX: estado
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.country" type="string" %}
-Código ISO 3166-1 alfa-2 del país
-
-Argentina: AR
-
-Chile: CL
-
-Colombia: CO
-
-México: MX
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.zipcode" type="string" required="true" %}
-Código postal.&#x20;
-
-No requerido en Chile ni Colombia.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages" type="array[package]" required="true" %}
-Array de objetos package. Minimo 1 package, maximo 99.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.description_1" type="string (60)" required="true" %}
-Titulo o descripcion del producto
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.description_2" type="string (60)" %}
-Info adicional del producto
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.description_3" type="string (60)" %}
-Info adicional del producto
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.weight" type="int" required="true" %}
-Peso, en gramos, del item
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.length" required="true" type="int" %}
-Largo, en centimetros
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.height" required="true" type="int" %}
-Alto, en centimetros
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.width" required="true" type="int" %}
-Ancho, en centimetros
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.classification_id" type="int" %}
-Identificador de clasificación de producto. Si lo omites o indicas 1 (General) intentaremos clasificarlo automaticamente segun la descripcion.
-
-[Ver Clasificaciones de producto](../../referencia/clasificaciones-de-producto.md)
-{% endswagger-parameter %}
-
-{% swagger-response status="200: OK" description="Una respuesta correcta contendrá este detalle." %}
+{% tabs %}
+{% tab title="200: OK Una respuesta correcta contendrá este detalle." %}
 ```javascript
 {
   "sorted_by": "price",
@@ -641,16 +489,16 @@ Identificador de clasificación de producto. Si lo omites o indicas 1 (General) 
   ]
 }
 ```
-{% endswagger-response %}
+{% endtab %}
 
-{% swagger-response status="400: Bad Request" description="Una respuesta erronea indicará detalladamente el motivo del error." %}
+{% tab title="400: Bad Request Una respuesta erronea indicará detalladamente el motivo del error." %}
 ```javascript
 {
     // Response
 }
 ```
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
 
 <details>
 
@@ -982,6 +830,11 @@ En el objeto `all_results` tendrás todos los resultados disponibles.
 ## Crear envíos
 
 {% hint style="warning" %}
+Los endpoints de creación de envíos utilizan **rate limiting** :red\_circle:<mark style="color:red;">**Alto**</mark>\
+[Ver más sobre límites de requests](../limites-de-requests.md)
+{% endhint %}
+
+{% hint style="warning" %}
 Al crear un envío necesitarás informar algunos datos que surgen de la cotización.&#x20;
 
 **Luego de cotizar, debes almacenar los valores de `logistic_type`, `service_type`, `carrier_id` de la opción de envío deseada, para luego utilizarlos al crear el envío.**
@@ -997,197 +850,49 @@ Recomendamos completar el atributo `source` con algo que identifique a tu integr
 
 Permite crear un envío indicando un conjunto de productos a despachar. La API empaquetará los items en paquetes de acuerdo a la lógica definida en la cuenta, y teniendo en cuenta los contenedores configurados.
 
-{% swagger method="post" path="/shipments" baseUrl="/v2" summary="Crear envío (basado en items) - Recomendado" %}
-{% swagger-description %}
+## Crear envío (basado en items) - Recomendado
+
+<mark style="color:green;">`POST`</mark> `/v2/shipments`
+
 Este request te permitirá crear envíos indicando los articulos que son parte del despacho. El sistema los agrupará en paquetes automáticamente, según las reglas definidas en la cuenta.
-{% endswagger-description %}
 
-{% swagger-parameter in="body" name="account_id" type="int" required="true" %}
-ID de la cuenta
-{% endswagger-parameter %}
+#### Request Body
 
-{% swagger-parameter in="body" name="origin_id" type="int" required="true" %}
-ID del origen del envío
-{% endswagger-parameter %}
+| Name                                                         | Type         | Description                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------------------------ | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| account\_id<mark style="color:red;">\*</mark>                | int          | ID de la cuenta                                                                                                                                                                                                                                                                                                                           |
+| origin\_id<mark style="color:red;">\*</mark>                 | int          | ID del origen del envío                                                                                                                                                                                                                                                                                                                   |
+| logistic\_type                                               | string       | <p>Código de la forma de despacho del envío.</p><p>Ejemplo: <code>carrier_dropoff</code></p><p>Se recomienda explicitarlo basado en los resultados obtenidos en la cotización utilizar la opcion de envio deseada</p>                                                                                                                     |
+| service\_type                                                | string       | <p>Código de la forma de entrega del envío.</p><p>Ejemplo: <code>standard_delivery</code></p><p>Se recomienda explicitarlo basado en los resultados obtenidos en la cotización utilizar la opcion de envio deseada</p>                                                                                                                    |
+| carrier\_id                                                  | int          | <p>ID del transporte que hará la entrega.</p><p>Se recomienda explicitarlo basado en los resultados obtenidos en la cotización.</p>                                                                                                                                                                                                       |
+| source                                                       | string (150) | Utilizado en algunas integraciones para identificar el canal de venta.                                                                                                                                                                                                                                                                    |
+| declared\_value<mark style="color:red;">\*</mark>            | float        | Valor declarado del envío. Monto que se asegurará. Para no utilizar seguro se debe enviar en cero.                                                                                                                                                                                                                                        |
+| destination.name<mark style="color:red;">\*</mark>           | string (100) | Nombre y apellido del destinatario                                                                                                                                                                                                                                                                                                        |
+| destination.street<mark style="color:red;">\*</mark>         | string (100) | <p>Calle del domicilio de entrega.</p><p>Requerido solo en entregas a domicilio.</p>                                                                                                                                                                                                                                                      |
+| destination.street\_number<mark style="color:red;">\*</mark> | string (10)  | <p>Altura/nro de puerta del domicilio de entrega.</p><p>Requerido solo en entregas a domicilio.</p>                                                                                                                                                                                                                                       |
+| destination.street\_extras                                   | string (190) | <p>Referencias adicionales del domicilio como piso, departamento, nro de lote, etc.</p><p>Requerido solo en entregas a domicilio.</p>                                                                                                                                                                                                     |
+| destination.point\_id                                        | int          | <p>ID de la ubicación de entrega.</p><p>Requerido solo cuando la entrega es en un punto de entrega.</p>                                                                                                                                                                                                                                   |
+| destination.document<mark style="color:red;">\*</mark>       | string (50)  | Número de documento (DNI, RUT, o lo que corresponda) del destinatario                                                                                                                                                                                                                                                                     |
+| destination.email<mark style="color:red;">\*</mark>          | email (150)  | Dirección de correo electrónico del destinatario                                                                                                                                                                                                                                                                                          |
+| destination.phone<mark style="color:red;">\*</mark>          | string (50)  | Número de contacto del destinatario                                                                                                                                                                                                                                                                                                       |
+| destination.state<mark style="color:red;">\*</mark>          | string       | <p>Nombre del Estado del domicilio del destinatario.</p><p>AR: provincia</p><p>CL: región</p><p>CO: departamento</p><p>MX: estado</p><p>Requerido solo en entregas a domicilio.</p>                                                                                                                                                       |
+| destination.city<mark style="color:red;">\*</mark>           | string       | <p>Nombre de la ciudad del domicilio del destinatario.</p><p>AR: localidad</p><p>CL: comuna</p><p>CO: ciudad</p><p>MX: ciudad</p><p>Requerido solo en entregas a domicilio.</p>                                                                                                                                                           |
+| destination.zipcode<mark style="color:red;">\*</mark>        | string       | <p>Codigo postal de la dirección de destino.</p><p>Requerido solo en entregas a domicilio.</p><p>Dato no requerido en Chile y Colombia.</p>                                                                                                                                                                                               |
+| destination.country                                          | string       | <p>Código ISO 3166-1 alfa-2 del país</p><p>Argentina: AR</p><p>Chile: CL</p><p>Colombia: CO</p><p>México: MX</p>                                                                                                                                                                                                                          |
+| destination<mark style="color:red;">\*</mark>                | object       | Objeto con datos del destinatario                                                                                                                                                                                                                                                                                                         |
+| items<mark style="color:red;">\*</mark>                      | array\[Item] | <p>Array de objetos Item. </p><p>Cada Item es un articulo a enviar. </p><p>El máximo de artículos por envío es 1000.</p><p>Ten en cuenta que más allá de la cantidad de items, un envío no puede resultar en más de 99 paquetes.</p>                                                                                                      |
+| items.\*.sku                                                 | string (190) | Se intentará vincular a un producto cargado en el catálogo de Zippin.                                                                                                                                                                                                                                                                     |
+| items.\*.weight<mark style="color:red;">\*</mark>            | int          | Peso en gramos.                                                                                                                                                                                                                                                                                                                           |
+| items.\*.classification\_id                                  | int          | <p>ID de clasificación de producto. </p><p>Si se omite se utilizará la clasificación General (1).</p><p><a href="../../referencia/clasificaciones-de-producto.md">Ver clasificaciones disponibles</a>.</p>                                                                                                                                |
+| items.\*.height<mark style="color:red;">\*</mark>            | int          | Alto del artículo, en centímetros.                                                                                                                                                                                                                                                                                                        |
+| items.\*.width<mark style="color:red;">\*</mark>             | int          | Ancho del artículo, en centímetros.                                                                                                                                                                                                                                                                                                       |
+| items.\*.length<mark style="color:red;">\*</mark>            | int          | Largo del artículo, en centímetros.                                                                                                                                                                                                                                                                                                       |
+| items.\*.description                                         | string (190) | Descripción o nombre del artículo                                                                                                                                                                                                                                                                                                         |
+| external\_id<mark style="color:red;">\*</mark>               | string (30)  | ID del envío en tus sistemas. Es para tu propia referencia.                                                                                                                                                                                                                                                                               |
+| type\_packaging                                              | string       | <p>Indica la forma de empaquetar los productos. Si se omite se usa el que tenga definido la cuenta por default.<br>Valores posible:<br><code>dynamic</code>: empaquetado dinámico<br><code>boxes</code>: usar cajas configuradas en la cuenta</p><p><code>none</code>: no empaquetar (cada item debe resultar en un package separado)</p> |
 
-{% swagger-parameter in="body" name="logistic_type" type="string" %}
-Código de la forma de despacho del envío.
-
-Ejemplo: `carrier_dropoff`
-
-Se recomienda explicitarlo basado en los resultados obtenidos en la cotización utilizar la opcion de envio deseada
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="service_type" type="string" %}
-Código de la forma de entrega del envío.
-
-Ejemplo: `standard_delivery`
-
-Se recomienda explicitarlo basado en los resultados obtenidos en la cotización utilizar la opcion de envio deseada
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="carrier_id" type="int" %}
-ID del transporte que hará la entrega.
-
-Se recomienda explicitarlo basado en los resultados obtenidos en la cotización.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="external_id" type="string (30)" required="true" %}
-ID del envío en tus sistemas. Es para tu propia referencia.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="source" type="string (150)" %}
-Utilizado en algunas integraciones para identificar el canal de venta.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="declared_value" type="float" required="true" %}
-Valor declarado del envío. Monto que se asegurará. Para no utilizar seguro se debe enviar en cero.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination" type="object" required="true" %}
-Objeto con datos del destinatario
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.point_id" type="int" %}
-ID de la ubicación de entrega.
-
-Requerido solo cuando la entrega es en un punto de entrega.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.name" type="string (100)" required="true" %}
-Nombre y apellido del destinatario
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.street" type="string (100)" required="true" %}
-Calle del domicilio de entrega.
-
-Requerido solo en entregas a domicilio.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.street_number" type="string (10)" required="true" %}
-Altura/nro de puerta del domicilio de entrega.
-
-Requerido solo en entregas a domicilio.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.street_extras" type="string (190)" %}
-Referencias adicionales del domicilio como piso, departamento, nro de lote, etc.
-
-Requerido solo en entregas a domicilio.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.city" type="string" required="true" %}
-Nombre de la ciudad del domicilio del destinatario.
-
-AR: localidad
-
-CL: comuna
-
-CO: ciudad
-
-MX: ciudad
-
-Requerido solo en entregas a domicilio.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.state" type="string" required="true" %}
-Nombre del Estado del domicilio del destinatario.
-
-AR: provincia
-
-CL: región
-
-CO: departamento
-
-MX: estado
-
-Requerido solo en entregas a domicilio.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.country" type="string" %}
-Código ISO 3166-1 alfa-2 del país
-
-Argentina: AR
-
-Chile: CL
-
-Colombia: CO
-
-México: MX
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.zipcode" type="string" required="true" %}
-Codigo postal de la dirección de destino.
-
-Requerido solo en entregas a domicilio.
-
-Dato no requerido en Chile y Colombia.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.document" type="string (50)" required="true" %}
-Número de documento (DNI, RUT, o lo que corresponda) del destinatario
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.email" type="email (150)" required="true" %}
-Dirección de correo electrónico del destinatario
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.phone" type="string (50)" required="true" %}
-Número de contacto del destinatario
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items" type="array[Item]" required="true" %}
-Array de objetos Item.&#x20;
-
-Cada Item es un articulo a enviar.&#x20;
-
-El máximo de artículos por envío es 1000.
-
-Ten en cuenta que más allá de la cantidad de items, un envío no puede resultar en más de 99 paquetes.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items.*.sku" type="string (190)" %}
-Se intentará vincular a un producto cargado en el catálogo de Zippin.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items.*.description" type="string (190)" %}
-Descripción o nombre del artículo
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items.*.weight" type="int" required="true" %}
-Peso en gramos.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items.*.length" type="int" required="true" %}
-Largo del artículo, en centímetros.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items.*.width" type="int" required="true" %}
-Ancho del artículo, en centímetros.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items.*.height" type="int" required="true" %}
-Alto del artículo, en centímetros.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="items.*.classification_id" type="int" %}
-ID de clasificación de producto.&#x20;
-
-Si se omite se utilizará la clasificación General (1).
-
-[Ver clasificaciones disponibles](../../referencia/clasificaciones-de-producto.md).
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="type_packaging" type="string" %}
-Indica la forma de empaquetar los productos. Si se omite se usa el que tenga definido la cuenta por default.\
-Valores posible:\
-`dynamic`: empaquetado dinámico\
-`boxes`: usar cajas configuradas en la cuenta
-
-`none`: no empaquetar (cada item debe resultar en un package separado)
-{% endswagger-parameter %}
-
-{% swagger-response status="201: Created" description="El envío se crea correctamente." %}
+{% tabs %}
+{% tab title="201: Created El envío se crea correctamente." %}
 ```javascript
 {
     // Detalle del envío creado
@@ -1195,9 +900,9 @@ Valores posible:\
 ```
 
 
-{% endswagger-response %}
+{% endtab %}
 
-{% swagger-response status="400: Bad Request" description="Un error en los datos impide crear el envío" %}
+{% tab title="400: Bad Request Un error en los datos impide crear el envío" %}
 ```javascript
 {
     // El detalle indicará detalladamente el motivo del error.
@@ -1205,8 +910,8 @@ Valores posible:\
 ```
 
 
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
 
 #### Crear por Paquetes
 
@@ -1214,188 +919,49 @@ Permite crear un envío indicando un conjunto de paquetes a despachar. Queda de 
 
 La utilización de múltiples paquetes sirve para cuando en un mismo envío debes despachar múltiples bultos (por ejemplo si estás enviando un colchón y un sommier).
 
-{% swagger method="post" path="/shipments" baseUrl="/v2" summary="Crear envío (basado en packages)" %}
-{% swagger-description %}
+## Crear envío (basado en packages)
+
+<mark style="color:green;">`POST`</mark> `/v2/shipments`
+
 Este request te permitirá crear envíos indicando los articulos que son parte del despacho. El sistema los agrupará en paquetes automáticamente, según las reglas definidas en la cuenta.
-{% endswagger-description %}
 
-{% swagger-parameter in="body" name="account_id" type="int" required="true" %}
-ID de la cuenta
-{% endswagger-parameter %}
+#### Request Body
 
-{% swagger-parameter in="body" name="origin_id" type="int" required="true" %}
-ID del origen del envío
-{% endswagger-parameter %}
+| Name                                                         | Type            | Description                                                                                                                                                                                                            |
+| ------------------------------------------------------------ | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| account\_id<mark style="color:red;">\*</mark>                | int             | ID de la cuenta                                                                                                                                                                                                        |
+| origin\_id<mark style="color:red;">\*</mark>                 | int             | ID del origen del envío                                                                                                                                                                                                |
+| logistic\_type                                               | string          | <p>Código de la forma de despacho del envío.</p><p>Ejemplo: <code>carrier_dropoff</code></p><p>Se recomienda explicitarlo basado en los resultados obtenidos en la cotización utilizar la opcion de envio deseada</p>  |
+| service\_type                                                | string          | <p>Código de la forma de entrega del envío.</p><p>Ejemplo: <code>standard_delivery</code></p><p>Se recomienda explicitarlo basado en los resultados obtenidos en la cotización utilizar la opcion de envio deseada</p> |
+| carrier\_id                                                  | int             | <p>ID del transporte que hará la entrega.</p><p>Se recomienda explicitarlo basado en los resultados obtenidos en la cotización.</p>                                                                                    |
+| source                                                       | string (100)    | Utilizado en algunas integraciones para identificar el canal de venta.                                                                                                                                                 |
+| declared\_value<mark style="color:red;">\*</mark>            | float           | Valor declarado del envío. Monto que se asegurará. Para no utilizar seguro se debe enviar en cero.                                                                                                                     |
+| destination.name<mark style="color:red;">\*</mark>           | string (100)    | Nombre y apellido del destinatario                                                                                                                                                                                     |
+| destination.street<mark style="color:red;">\*</mark>         | string (100)    | <p>Calle del domicilio de entrega.</p><p>Requerido solo en entregas a domicilio.</p>                                                                                                                                   |
+| destination.street\_number<mark style="color:red;">\*</mark> | string (10)     | <p>Altura/nro de puerta del domicilio de entrega.</p><p>Requerido solo en entregas a domicilio.</p>                                                                                                                    |
+| destination.street\_extras (190)                             | string          | <p>Referencias adicionales del domicilio como piso, departamento, nro de lote, etc.</p><p>Requerido solo en entregas a domicilio.</p>                                                                                  |
+| destination.point\_id                                        | int             | <p>ID de la ubicación de entrega.</p><p>Requerido solo cuando la entrega es en un punto de entrega.</p>                                                                                                                |
+| destination.document<mark style="color:red;">\*</mark>       | string (50)     | Número de documento (DNI, RUT, o lo que corresponda) del destinatario                                                                                                                                                  |
+| destination.email<mark style="color:red;">\*</mark>          | email (150)     | Dirección de correo electrónico del destinatario                                                                                                                                                                       |
+| destination.phone<mark style="color:red;">\*</mark>          | string (50)     | Número de contacto del destinatario                                                                                                                                                                                    |
+| destination.state<mark style="color:red;">\*</mark>          | string          | <p>Nombre del Estado del domicilio del destinatario.</p><p>AR: provincia</p><p>CL: región</p><p>CO: departamento</p><p>MX: estado</p><p>Requerido solo en entregas a domicilio.</p>                                    |
+| destination.city<mark style="color:red;">\*</mark>           | string          | <p>Nombre de la ciudad del domicilio del destinatario.</p><p>AR: localidad</p><p>CL: comuna</p><p>CO: ciudad</p><p>MX: ciudad</p><p>Requerido solo en entregas a domicilio.</p>                                        |
+| destination.zipcode<mark style="color:red;">\*</mark>        | string          | <p>Codigo postal de la dirección de destino.</p><p>Requerido solo en entregas a domicilio.</p><p>Dato no requerido en Chile y Colombia.</p>                                                                            |
+| destination.country                                          | string          | <p>Código ISO 3166-1 alfa-2 del país</p><p>Argentina: AR</p><p>Chile: CL</p><p>Colombia: CO</p><p>México: MX</p>                                                                                                       |
+| destination<mark style="color:red;">\*</mark>                | object          | Objeto con datos del destinatario                                                                                                                                                                                      |
+| packages<mark style="color:red;">\*</mark>                   | array\[package] | <p>Array de objetos Package.  </p><p>El máximo de paquetes por envío es 99.</p>                                                                                                                                        |
+| packages.\*.weight<mark style="color:red;">\*</mark>         | int             | Peso en gramos.                                                                                                                                                                                                        |
+| packages.\*.classification\_id                               | int             | <p>ID de clasificación de producto del paquete. </p><p>Si se omite se utilizará la clasificación General (1).</p><p><a href="../../referencia/clasificaciones-de-producto.md">Ver clasificaciones disponibles</a>.</p> |
+| packages.\*.height<mark style="color:red;">\*</mark>         | int             | Alto del paquete, en centímetros.                                                                                                                                                                                      |
+| packages.\*.width<mark style="color:red;">\*</mark>          | int             | Ancho del paquete, en centímetros.                                                                                                                                                                                     |
+| packages.\*.length<mark style="color:red;">\*</mark>         | int             | Largo del paquete, en centímetros.                                                                                                                                                                                     |
+| packages.\*.description\_1<mark style="color:red;">\*</mark> | string (60)     | Descripción del contenido (linea 1)                                                                                                                                                                                    |
+| packages.\*.description\_3                                   | string (60)     | Descripción del contenido (linea 3)                                                                                                                                                                                    |
+| packages.\*.description\_2                                   | string (60)     | Descripción del contenido (linea 2)                                                                                                                                                                                    |
+| external\_id<mark style="color:red;">\*</mark>               | string (30)     | ID del envío en tus sistemas. Es para tu propia referencia.                                                                                                                                                            |
 
-{% swagger-parameter in="body" name="logistic_type" type="string" %}
-Código de la forma de despacho del envío.
-
-Ejemplo: `carrier_dropoff`
-
-Se recomienda explicitarlo basado en los resultados obtenidos en la cotización utilizar la opcion de envio deseada
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="service_type" type="string" %}
-Código de la forma de entrega del envío.
-
-Ejemplo: `standard_delivery`
-
-Se recomienda explicitarlo basado en los resultados obtenidos en la cotización utilizar la opcion de envio deseada
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="carrier_id" type="int" %}
-ID del transporte que hará la entrega.
-
-Se recomienda explicitarlo basado en los resultados obtenidos en la cotización.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="source" type="string (100)" %}
-Utilizado en algunas integraciones para identificar el canal de venta.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="external_id" type="string (30)" required="true" %}
-ID del envío en tus sistemas. Es para tu propia referencia.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="declared_value" type="float" required="true" %}
-Valor declarado del envío. Monto que se asegurará. Para no utilizar seguro se debe enviar en cero.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination" type="object" required="true" %}
-Objeto con datos del destinatario
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.point_id" type="int" %}
-ID de la ubicación de entrega.
-
-Requerido solo cuando la entrega es en un punto de entrega.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.name" type="string (100)" required="true" %}
-Nombre y apellido del destinatario
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.street" type="string (100)" required="true" %}
-Calle del domicilio de entrega.
-
-Requerido solo en entregas a domicilio.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.street_number" type="string (10)" required="true" %}
-Altura/nro de puerta del domicilio de entrega.
-
-Requerido solo en entregas a domicilio.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.street_extras (190)" type="string" %}
-Referencias adicionales del domicilio como piso, departamento, nro de lote, etc.
-
-Requerido solo en entregas a domicilio.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.city" type="string" required="true" %}
-Nombre de la ciudad del domicilio del destinatario.
-
-AR: localidad
-
-CL: comuna
-
-CO: ciudad
-
-MX: ciudad
-
-Requerido solo en entregas a domicilio.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.state" type="string" required="true" %}
-Nombre del Estado del domicilio del destinatario.
-
-AR: provincia
-
-CL: región
-
-CO: departamento
-
-MX: estado
-
-Requerido solo en entregas a domicilio.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.country" type="string" %}
-Código ISO 3166-1 alfa-2 del país
-
-Argentina: AR
-
-Chile: CL
-
-Colombia: CO
-
-México: MX
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.zipcode" type="string" required="true" %}
-Codigo postal de la dirección de destino.
-
-Requerido solo en entregas a domicilio.
-
-Dato no requerido en Chile y Colombia.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.document" type="string (50)" required="true" %}
-Número de documento (DNI, RUT, o lo que corresponda) del destinatario
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.email" type="email (150)" required="true" %}
-Dirección de correo electrónico del destinatario
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="destination.phone" type="string (50)" required="true" %}
-Número de contacto del destinatario
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages" type="array[package]" required="true" %}
-Array de objetos Package. &#x20;
-
-El máximo de paquetes por envío es 99.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.description_1" type="string (60)" required="true" %}
-Descripción del contenido (linea 1)
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.description_2" type="string (60)" %}
-Descripción del contenido (linea 2)
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.description_3" type="string (60)" %}
-Descripción del contenido (linea 3)
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.weight" type="int" required="true" %}
-Peso en gramos.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.length" type="int" required="true" %}
-Largo del paquete, en centímetros.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.width" type="int" required="true" %}
-Ancho del paquete, en centímetros.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.height" type="int" required="true" %}
-Alto del paquete, en centímetros.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.classification_id" type="int" %}
-ID de clasificación de producto del paquete.&#x20;
-
-Si se omite se utilizará la clasificación General (1).
-
-[Ver clasificaciones disponibles](../../referencia/clasificaciones-de-producto.md).
-{% endswagger-parameter %}
-
-{% swagger-response status="201: Created" description="El envío se crea correctamente." %}
+{% tabs %}
+{% tab title="201: Created El envío se crea correctamente." %}
 ```javascript
 {
     // Detalle del envío creado
@@ -1403,9 +969,9 @@ Si se omite se utilizará la clasificación General (1).
 ```
 
 
-{% endswagger-response %}
+{% endtab %}
 
-{% swagger-response status="400: Bad Request" description="Un error en los datos impide crear el envío" %}
+{% tab title="400: Bad Request Un error en los datos impide crear el envío" %}
 ```javascript
 {
     // El detalle indicará detalladamente el motivo del error.
@@ -1413,8 +979,8 @@ Si se omite se utilizará la clasificación General (1).
 ```
 
 
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
 
 ## Devoluciones
 
@@ -1431,40 +997,31 @@ Al hacer el request **hay algunas particularidades** con respecto a la definici�
 * **Particularidades en la definición de items a devolver**\
   Para cada paquete que se indique en el array de paquetes se deberá indicar que items se devolverán. En caso de no indicar el array de  **items** con los items que contendrán los paquetes de la devolución. El sistema interpreta que se devolverán todos los items del paquete indicado. Si el array de items esta definido dentro de un paquete solo se cotizará la devolución de los items que contenga dicho array.
 
-{% swagger method="post" path="/shipments/{id}/return/quote" baseUrl="/v2" summary="Cotizar devolución" %}
-{% swagger-description %}
+## Cotizar devolución
+
+<mark style="color:green;">`POST`</mark> `/v2/shipments/{id}/return/quote`
+
 Este request te permitirá obtener cotizaciones para una devolución de un envío, indicando los ítems específicos que forman parte de la devolución.
-{% endswagger-description %}
 
-{% swagger-parameter in="body" name="account_id" type="int" required="true" %}
-ID de la cuenta
-{% endswagger-parameter %}
+#### Path Parameters
 
-{% swagger-parameter in="body" name="declared_value" type="float" required="true" %}
-Valor declarado total del contenido. Monto que se utilizará para el seguro. Si no se va a asegurar el contenido, se puede indicar el valor 0.
-{% endswagger-parameter %}
+| Name                                 | Type | Description                           |
+| ------------------------------------ | ---- | ------------------------------------- |
+| id<mark style="color:red;">\*</mark> | int  | ID del envío a cotizar una devolución |
 
-{% swagger-parameter in="body" name="packages" type="array" required="true" %}
-Array de objetos packages.
-{% endswagger-parameter %}
+#### Request Body
 
-{% swagger-parameter in="body" name="packages.*.id" type="int" required="true" %}
-ID del paquete del envio original que se quiere devolver
-{% endswagger-parameter %}
+| Name                                              | Type  | Description                                                                                                                                                   |
+| ------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| account\_id<mark style="color:red;">\*</mark>     | int   | ID de la cuenta                                                                                                                                               |
+| declared\_value<mark style="color:red;">\*</mark> | float | Valor declarado total del contenido. Monto que se utilizará para el seguro. Si no se va a asegurar el contenido, se puede indicar el valor 0.                 |
+| packages<mark style="color:red;">\*</mark>        | array | Array de objetos packages.                                                                                                                                    |
+| packages.\*.id<mark style="color:red;">\*</mark>  | int   | ID del paquete del envio original que se quiere devolver                                                                                                      |
+| packages.\*.items                                 | array | Opcionalmente, se puede indicar qué items de un paquete se quieren incluir en la devolucion. Si se omite, se asume que se quiere devolver el paquete completo |
+| package.\*.items.\*.id                            | int   | ID de item del paquete                                                                                                                                        |
 
-{% swagger-parameter in="body" name="packages.*.items" type="array" %}
-Opcionalmente, se puede indicar qué items de un paquete se quieren incluir en la devolucion. Si se omite, se asume que se quiere devolver el paquete completo
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="package.*.items.*.id" type="int" %}
-ID de item del paquete
-{% endswagger-parameter %}
-
-{% swagger-parameter in="path" name="id" type="int" required="true" %}
-ID del envío a cotizar una devolución
-{% endswagger-parameter %}
-
-{% swagger-response status="200: OK" description="Una respuesta correcta contendrá este detalle." %}
+{% tabs %}
+{% tab title="200: OK Una respuesta correcta contendrá este detalle." %}
 ```javascript
 // Request
 {
@@ -1670,8 +1227,8 @@ ID del envío a cotizar una devolución
   ]
 }
 ```
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
 
 ### Crear envío de logística inversa
 
@@ -1686,56 +1243,32 @@ Al hacer el request **hay algunas particularidades** con respecto a la definici�
 * **Particularidades en la definición de items a devolver**\
   Para cada paquete que se indique en el array de paquetes se deberá indicar que items se devolverán. En caso de no indicar el array de  **items** con los items que contendrán los paquetes de la devolución. El sistema interpreta que se devolverán todos los items del paquete indicado. Si el array de items esta definido dentro de un paquete solo se creará la devolución de los items que contenga dicho array.
 
-{% swagger method="post" path="/shipments/{id}/return" baseUrl="/v2" summary="Crear devolución" %}
-{% swagger-description %}
+## Crear devolución
 
-{% endswagger-description %}
+<mark style="color:green;">`POST`</mark> `/v2/shipments/{id}/return`
 
-{% swagger-parameter in="body" name="account_id" type="int" required="true" %}
-ID de la cuenta
-{% endswagger-parameter %}
+#### Path Parameters
 
-{% swagger-parameter in="body" name="declared_value" type="float" required="true" %}
-Valor declarado total del contenido. Monto que se utilizará para el seguro. Si no se va a asegurar el contenido, se puede indicar el valor 0.
-{% endswagger-parameter %}
+| Name                                 | Type | Description                                  |
+| ------------------------------------ | ---- | -------------------------------------------- |
+| id<mark style="color:red;">\*</mark> | int  | ID del envío a del cual crear una devolución |
 
-{% swagger-parameter in="body" name="service_type" type="string" required="true" %}
-Código del tipo de servicio (sale de la cotización)
+#### Request Body
 
-Ej. `return_origin`
-{% endswagger-parameter %}
+| Name                                              | Type   | Description                                                                                                                                                   |
+| ------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| account\_id<mark style="color:red;">\*</mark>     | int    | ID de la cuenta                                                                                                                                               |
+| declared\_value<mark style="color:red;">\*</mark> | float  | Valor declarado total del contenido. Monto que se utilizará para el seguro. Si no se va a asegurar el contenido, se puede indicar el valor 0.                 |
+| packages<mark style="color:red;">\*</mark>        | array  | Array de objetos packages.                                                                                                                                    |
+| packages.\*.id<mark style="color:red;">\*</mark>  | int    | ID del paquete del envio original que se quiere devolver                                                                                                      |
+| packages.\*.items                                 | array  | Opcionalmente, se puede indicar qué items de un paquete se quieren incluir en la devolucion. Si se omite, se asume que se quiere devolver el paquete completo |
+| package.\*.items.\*.id                            | int    | ID de item del paquete                                                                                                                                        |
+| carrier\_id                                       | int    | Para indicar con qué transporte crear la devolución (sale de la cotización).                                                                                  |
+| logistic\_type<mark style="color:red;">\*</mark>  | string | <p>Código del modo de despacho (sale de la cotización)</p><p>Ej. <code>carrier_dropoff</code></p>                                                             |
+| service\_type<mark style="color:red;">\*</mark>   | string | <p>Código del tipo de servicio (sale de la cotización)</p><p>Ej. <code>return_origin</code></p>                                                               |
 
-{% swagger-parameter in="body" name="logistic_type" type="string" required="true" %}
-Código del modo de despacho (sale de la cotización)
-
-Ej. `carrier_dropoff`
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="carrier_id" type="int" %}
-Para indicar con qué transporte crear la devolución (sale de la cotización).
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages" type="array" required="true" %}
-Array de objetos packages.
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.id" type="int" required="true" %}
-ID del paquete del envio original que se quiere devolver
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="packages.*.items" type="array" %}
-Opcionalmente, se puede indicar qué items de un paquete se quieren incluir en la devolucion. Si se omite, se asume que se quiere devolver el paquete completo
-{% endswagger-parameter %}
-
-{% swagger-parameter in="body" name="package.*.items.*.id" type="int" %}
-ID de item del paquete
-{% endswagger-parameter %}
-
-{% swagger-parameter in="path" name="id" type="int" required="true" %}
-ID del envío a del cual crear una devolución
-{% endswagger-parameter %}
-
-{% swagger-response status="201: Created" description="Una respuesta correcta contendrá este detalle." %}
+{% tabs %}
+{% tab title="201: Created Una respuesta correcta contendrá este detalle." %}
 ```javascript
 // Request
 {
@@ -1898,8 +1431,8 @@ ID del envío a del cual crear una devolución
   "tags": []
 }
 ```
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
 
 \
 

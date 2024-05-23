@@ -2,51 +2,32 @@
 
 ## Obtener envíos
 
+{% hint style="warning" %}
+Los endpoints de búsqueda y obtención de envíos y tracking utilizan **rate limiting** :yellow\_circle:<mark style="color:yellow;">**Bajo**</mark>\
+[Ver más sobre límites de requests](../limites-de-requests.md)
+{% endhint %}
+
 ### Listado/búsqueda de envíos
 
-{% swagger baseUrl="/v2" method="get" path="/shipments" summary="Buscar envíos" %}
-{% swagger-description %}
+## Buscar envíos
+
+<mark style="color:blue;">`GET`</mark> `/v2/shipments`
+
 Obtiene un listado de envíos. Se pueden aplicar filtros sobre distintos campos.
-{% endswagger-description %}
 
-{% swagger-parameter in="query" name="account_id" required="false" type="int" %}
-Filtrar envíos de una cuenta por ID.
+#### Query Parameters
 
-Ejemplo: <mark style="color:red;">`account_id=2`</mark>
-{% endswagger-parameter %}
+| Name          | Type   | Description                                                                                                                                                                                            |
+| ------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| account\_id   | int    | <p>Filtrar envíos de una cuenta por ID.</p><p>Ejemplo: <mark style="color:red;"><code>account_id=2</code></mark></p>                                                                                   |
+| external\_id  | string | <p>Filtrar envíos por su ID Externo</p><p>Ejemplo: <mark style="color:red;"><code>external_id=DJDSJCMR</code></mark></p>                                                                               |
+| service\_type | string | <p>Filtrar envíos por su tipo de servicio.</p><p>Ejemplo: <mark style="color:red;"><code>service_type=standard_delivery</code></mark></p>                                                              |
+| status        | string | <p>Filtrar envíos por su estado actual.</p><p>Ejemplo: <mark style="color:red;"><code>status=delivered</code></mark></p><p><a href="../../referencia/estados-de-envio.md">Ver estados posibles</a></p> |
+| origin\_id    | int    | <p>Filtrar envíos de un origen por ID.</p><p>Ejemplo: <mark style="color:red;"><code>origin_id=32</code></mark></p>                                                                                    |
+| order\_id     | string | <p>Filtrar envíos por el ID visible de una venta relacionada de un canal integrada.<br>Ejemplo: <mark style="color:red;"><code>order_id=200000334445566</code></mark></p>                              |
 
-{% swagger-parameter in="query" name="origin_id" type="int" %}
-Filtrar envíos de un origen por ID.
-
-Ejemplo: <mark style="color:red;">`origin_id=32`</mark>
-{% endswagger-parameter %}
-
-{% swagger-parameter in="query" name="external_id" required="false" type="string" %}
-Filtrar envíos por su ID Externo
-
-Ejemplo: <mark style="color:red;">`external_id=DJDSJCMR`</mark>
-{% endswagger-parameter %}
-
-{% swagger-parameter in="query" name="order_id" type="string" %}
-Filtrar envíos por el ID visible de una venta relacionada de un canal integrada.\
-Ejemplo: <mark style="color:red;">`order_id=200000334445566`</mark>
-{% endswagger-parameter %}
-
-{% swagger-parameter in="query" name="service_type" required="false" type="string" %}
-Filtrar envíos por su tipo de servicio.
-
-Ejemplo: <mark style="color:red;">`service_type=standard_delivery`</mark>
-{% endswagger-parameter %}
-
-{% swagger-parameter in="query" name="status" required="false" type="string" %}
-Filtrar envíos por su estado actual.
-
-Ejemplo: <mark style="color:red;">`status=delivered`</mark>
-
-[Ver estados posibles](../../referencia/estados-de-envio.md)
-{% endswagger-parameter %}
-
-{% swagger-response status="200" description="Listado de resultados" %}
+{% tabs %}
+{% tab title="200 Listado de resultados" %}
 ```javascript
 {
     "data": [
@@ -102,21 +83,25 @@ Ejemplo: <mark style="color:red;">`status=delivered`</mark>
     }
 }
 ```
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
 
 ### Detalle de un envío
 
-{% swagger method="get" path="/shipments/{shipment_id}" baseUrl="/v2" summary="Detalle de un envío" %}
-{% swagger-description %}
+## Detalle de un envío
+
+<mark style="color:blue;">`GET`</mark> `/v2/shipments/{shipment_id}`
+
 Obtiene el detalle de un envío determinado
-{% endswagger-description %}
 
-{% swagger-parameter in="path" name="shipment_id" type="int" required="true" %}
-ID del envío.
-{% endswagger-parameter %}
+#### Path Parameters
 
-{% swagger-response status="200: OK" description="Detalle de un envío" %}
+| Name                                           | Type | Description   |
+| ---------------------------------------------- | ---- | ------------- |
+| shipment\_id<mark style="color:red;">\*</mark> | int  | ID del envío. |
+
+{% tabs %}
+{% tab title="200: OK Detalle de un envío" %}
 ```javascript
 {
     "id": 101981,
@@ -197,8 +182,8 @@ ID del envío.
     ]
 }
 ```
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
 
 ### Ubicaciones disponibles para despacho
 
@@ -208,16 +193,18 @@ En los envíos con despacho en un punto (cuando el `logistic_type` es `xd_dropof
 La ubicaciones ofrecidas sólo muestran aquellas que pueden recibir el envío en función de su peso y dimensiones.
 {% endhint %}
 
-{% swagger method="get" path="/shipments/{shipment_id}/dropoff_locations" baseUrl="/v2" summary="Ubicaciones para despacho de un envío" %}
-{% swagger-description %}
+## Ubicaciones para despacho de un envío
 
-{% endswagger-description %}
+<mark style="color:blue;">`GET`</mark> `/v2/shipments/{shipment_id}/dropoff_locations`
 
-{% swagger-parameter in="path" name="shipment_id" type="int" required="true" %}
-ID del envío a despachar
-{% endswagger-parameter %}
+#### Path Parameters
 
-{% swagger-response status="200: OK" description="Listado de ubicaciones" %}
+| Name                                           | Type | Description              |
+| ---------------------------------------------- | ---- | ------------------------ |
+| shipment\_id<mark style="color:red;">\*</mark> | int  | ID del envío a despachar |
+
+{% tabs %}
+{% tab title="200: OK Listado de ubicaciones" %}
 ```javascript
 {
     "data": [
@@ -262,8 +249,8 @@ ID del envío a despachar
     ]
 }
 ```
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
 
 ## Edición de envíos
 
@@ -275,20 +262,19 @@ Actualmente solo es posible editar el atributo de external\_id, siempre y cuando
 Al hacer la modificación, **se reseteará el estado** del envío a Pendiente de Preparación y habrá que **volver a descargar la documentación** de despacho, si ya se hubiera hecho.
 {% endhint %}
 
-{% swagger method="put" path="/shipments/{shipment_id}" baseUrl="/v2" summary="Editar un envío" %}
-{% swagger-description %}
+## Editar un envío
 
-{% endswagger-description %}
+<mark style="color:orange;">`PUT`</mark> `/v2/shipments/{shipment_id}`
 
-{% swagger-parameter in="path" name="shipment_id" type="int" required="true" %}
-ID del envío
-{% endswagger-parameter %}
+#### Path Parameters
 
-{% swagger-parameter in="path" name="external_id" type="string" %}
-ID externo del envío. Solo admite letras, números y guiones.
-{% endswagger-parameter %}
+| Name                                           | Type   | Description                                                  |
+| ---------------------------------------------- | ------ | ------------------------------------------------------------ |
+| shipment\_id<mark style="color:red;">\*</mark> | int    | ID del envío                                                 |
+| external\_id                                   | string | ID externo del envío. Solo admite letras, números y guiones. |
 
-{% swagger-response status="200: OK" description="Envío modificado" %}
+{% tabs %}
+{% tab title="200: OK Envío modificado" %}
 ```javascript
 {
         "shipment_id": 123456,
@@ -298,8 +284,8 @@ ID externo del envío. Solo admite letras, números y guiones.
                 }
     }
 ```
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
 
 ## Documentación de despacho
 
@@ -309,65 +295,60 @@ La documentación de despacho está compuesta de una etiqueta por cada paquete d
 Para despachar un envío es obligatorio pegar **cada etiqueta a un paquete distinto**, e **imprimir la guía de despacho**, si estuviera disponible, la cual se debe adherir a la factura de venta o remito legal.
 {% endhint %}
 
-{% swagger method="get" path="/shipments/{shipment_id}/documentation?what={what}&format={format}" baseUrl="/v2" summary="Obtener documentación" %}
-{% swagger-description %}
+## Obtener documentación
+
+<mark style="color:blue;">`GET`</mark> `/v2/shipments/{shipment_id}/documentation?what={what}&format={format}`
+
 Obtiene los archivos de etiquetas o la guia de despacho.
 
 En cualquier caso el contenido del archivo se devuelve encodeado en base64.
-{% endswagger-description %}
 
-{% swagger-parameter in="path" name="shipment_id" type="int" required="true" %}
-ID del envío
-{% endswagger-parameter %}
+#### Path Parameters
 
-{% swagger-parameter in="query" name="what" type="string" required="true" %}
-Tipo de archivo a obtener:
+| Name                                           | Type | Description  |
+| ---------------------------------------------- | ---- | ------------ |
+| shipment\_id<mark style="color:red;">\*</mark> | int  | ID del envío |
 
-<mark style="color:red;">`document`</mark> para la guía (solo disponible en PDF)&#x20;
+#### Query Parameters
 
-<mark style="color:red;">`label`</mark> para las etiquetas de cada paquete (en PDF o ZPL)
-{% endswagger-parameter %}
+| Name                                   | Type   | Description                                                                                                                                                                                                                                     |
+| -------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| what<mark style="color:red;">\*</mark> | string | <p>Tipo de archivo a obtener:</p><p><mark style="color:red;"><code>document</code></mark> para la guía (solo disponible en PDF) </p><p><mark style="color:red;"><code>label</code></mark> para las etiquetas de cada paquete (en PDF o ZPL)</p> |
+| format                                 | string | <p>Formato de las etiquetas:</p><p><mark style="color:red;"><code>pdf</code></mark> (por defecto)</p><p><mark style="color:red;"><code>zpl</code></mark></p>                                                                                    |
 
-{% swagger-parameter in="query" name="format" type="string" %}
-Formato de las etiquetas:
-
-<mark style="color:red;">`pdf`</mark> (por defecto)
-
-<mark style="color:red;">`zpl`</mark>
-{% endswagger-parameter %}
-
-{% swagger-response status="200: OK" description="Contenido del archivo con encoding base64" %}
+{% tabs %}
+{% tab title="200: OK Contenido del archivo con encoding base64" %}
 ```javascript
 {
     "format": "zpl",
     "body": "XlhBflRBMDAwfkpTTl5MVDBeTU5XXk1UVF5QT05eUE1OXkxIMCwwXkpNQV5QUjQsNH5TRDE1XkpVU15MUk5eQ0kwXlhaXlhBXk1NVF5QVzgzMV5MTDEyMzleTFMwXkZPRk81ODAsMjBeR0ZBLDIxNjAsMjE2MCwyNywsOjpMMDc4LEwwRkMsSzAxRkUsSzAxRkYsSzAzRkY4LEswM0kZIXF5GRDMgLyAzXkZTXkZPMjAsOTQwXkdCNzcxLDAsOF5GU15GVDE4MCw5OD15CWTIsMywxNDBeRlQxODAsMTE2MF5CQ04sLFksTl5GRD46MDk5OS0wMDEwMTQ3NC0wMzAzXkZTXlBRMSwwLDEsWV5YWg=="
 }
 ```
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
 
 ## Tracking
 
 En este endpoint podrás obtener un detalle de los movimientos de un envío.
 
-{% swagger method="get" path="/shipments/{shipment_id}/tracking" baseUrl="/v2" summary="Obtener historial de estados" %}
-{% swagger-description %}
+## Obtener historial de estados
 
-{% endswagger-description %}
+<mark style="color:blue;">`GET`</mark> `/v2/shipments/{shipment_id}/tracking`
 
-{% swagger-parameter in="path" name="shipment_id" type="int" required="true" %}
-ID del envío
-{% endswagger-parameter %}
+#### Path Parameters
 
-{% swagger-parameter in="query" name="sort" type="string" %}
-Ordenamiento de los movimientos
+| Name                                           | Type | Description  |
+| ---------------------------------------------- | ---- | ------------ |
+| shipment\_id<mark style="color:red;">\*</mark> | int  | ID del envío |
 
-<mark style="color:red;">`oldest`</mark> ordena desde los movimientos mas antiguos a los mas recientes (por defecto)
+#### Query Parameters
 
-<mark style="color:red;">`newest`</mark> ordena desde los movimientos mas recientes a los mas antiguos&#x20;
-{% endswagger-parameter %}
+| Name | Type   | Description                                                                                                                                                                                                                                                                                           |
+| ---- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| sort | string | <p>Ordenamiento de los movimientos</p><p><mark style="color:red;"><code>oldest</code></mark> ordena desde los movimientos mas antiguos a los mas recientes (por defecto)</p><p><mark style="color:red;"><code>newest</code></mark> ordena desde los movimientos mas recientes a los mas antiguos </p> |
 
-{% swagger-response status="200: OK" description="" %}
+{% tabs %}
+{% tab title="200: OK " %}
 ```javascript
 [
     {
@@ -417,8 +398,8 @@ Ordenamiento de los movimientos
     }
 ]
 ```
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
 
 ## Anular envíos
 
@@ -432,16 +413,18 @@ Cuando se solicite cancelar un envío no despachado su estado pasará a **Anulac
 Con esa solicitud se notificará al transporte para que no haga la entrega, aunque no siempre se puede garantizar que se cumpla la solicitud.
 {% endhint %}
 
-{% swagger method="post" path="/shipments/{shipment_id}/cancel" baseUrl="/v2" summary="Cancelar o solicitar rescate de un envío" %}
-{% swagger-description %}
+## Cancelar o solicitar rescate de un envío
 
-{% endswagger-description %}
+<mark style="color:green;">`POST`</mark> `/v2/shipments/{shipment_id}/cancel`
 
-{% swagger-parameter in="path" name="shipment_id" type="int" required="true" %}
-ID del envío
-{% endswagger-parameter %}
+#### Path Parameters
 
-{% swagger-response status="200: OK" description="Envío Cancelado" %}
+| Name                                           | Type | Description  |
+| ---------------------------------------------- | ---- | ------------ |
+| shipment\_id<mark style="color:red;">\*</mark> | int  | ID del envío |
+
+{% tabs %}
+{% tab title="200: OK Envío Cancelado" %}
 ```javascript
 {
         "shipment_id": 123456,
@@ -449,9 +432,9 @@ ID del envío
         "result": "canceled"
     }
 ```
-{% endswagger-response %}
+{% endtab %}
 
-{% swagger-response status="200: OK" description="Solicitud de rescate generada" %}
+{% tab title="200: OK Solicitud de rescate generada" %}
 ```javascript
 {
         "shipment_id": 123456,
@@ -459,9 +442,9 @@ ID del envío
         "result": "rescue_requested"
     }
 ```
-{% endswagger-response %}
+{% endtab %}
 
-{% swagger-response status="401: Unauthorized" description="Cancelación no es posible" %}
+{% tab title="401: Unauthorized Cancelación no es posible" %}
 ```javascript
 {
         "shipment_id": 123456,
@@ -469,5 +452,5 @@ ID del envío
         "result": null
     }
 ```
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
