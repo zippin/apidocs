@@ -454,3 +454,53 @@ Con esa solicitud se notificará al transporte para que no haga la entrega, aunq
 ```
 {% endtab %}
 {% endtabs %}
+
+
+
+## Actualizar estados de envíos de Flota Propia
+
+<mark style="color:green;">`POST`</mark> `/v2/shipments/{shipment_id}/tracking`
+
+Si deseas actualizar los estados de tus envíos de flota propia, podrás usar este endpoint. Ten en cuenta que solo podrás definir algunos estados.
+
+#### Estados permitidos
+
+<table><thead><tr><th width="167">Estado</th><th width="184">Código</th><th>Subestados</th></tr></thead><tbody><tr><td>Listo para Despacho</td><td>ready_to_ship </td><td></td></tr><tr><td>Anulacion Confirmada </td><td>cancelled </td><td></td></tr><tr><td>Despachado de Origen</td><td>shipped </td><td></td></tr><tr><td>En Transito a Transporte</td><td>in_transit_to_carrier </td><td></td></tr><tr><td>Recibido Transporte</td><td>received_by_carrier </td><td></td></tr><tr><td>En Camino</td><td><p>in_transit</p><p></p></td><td></td></tr><tr><td>Entregado</td><td>delivered </td><td></td></tr><tr><td>No Entregado</td><td>not_delivered </td><td><p>Se debe indicar alguno de estos subestados:</p><table><thead><tr><th>Subestado</th><th>Codigo</th></tr></thead><tbody><tr><td>Cliente no esta en destino</td><td>client_not_in_address</td></tr><tr><td>Cliente no quiere Recibir</td><td>client_rejected_shipment</td></tr><tr><td>Daño Parcial</td><td>partial_damage</td></tr><tr><td>Daño Total</td><td>total_damage</td></tr><tr><td>Direccion Incorrecta</td><td>bad_address</td></tr><tr><td>Error del Transporte</td><td>carrier_error</td></tr><tr><td>Extravio Parcial</td><td>partial_loss</td></tr><tr><td>Extravio Total</td><td>total_loss</td></tr><tr><td>Falta documentacion</td><td>missing_documentation</td></tr><tr><td>Imposibilidad de Acceso</td><td>inaccessible</td></tr><tr><td>Intentos de Entrega Agotados</td><td>exhausted_delivery_attempts</td></tr><tr><td>Otros</td><td>others</td></tr><tr><td>Zona Peligrosa</td><td>danger_zone</td></tr></tbody></table></td></tr><tr><td>Siniestrado en Transporte</td><td>lost_in_carrier</td><td></td></tr></tbody></table>
+
+#### Path Parameters
+
+| Name                                           | Type | Description  |
+| ---------------------------------------------- | ---- | ------------ |
+| shipment\_id<mark style="color:red;">\*</mark> | int  | ID del envío |
+
+**Body**
+
+| Name                                       | Type   | Description                                 |
+| ------------------------------------------ | ------ | ------------------------------------------- |
+| `status`<mark style="color:red;">\*</mark> | string | Código del estado                           |
+| `substatus`                                | string | Código del subestado (solo si es necesario) |
+| `comment`                                  | string | Comentario opcional. Máximo 150 caracteres. |
+
+**Response**
+
+{% tabs %}
+{% tab title="200" %}
+```json
+{
+  // Detalle del envío recién actualizado
+}
+```
+{% endtab %}
+
+{% tab title="400" %}
+```json
+{
+	"status": "error",
+	"message": "Validation Error",
+	"errors": [
+		"The substatus field is required."
+	]
+}
+```
+{% endtab %}
+{% endtabs %}
