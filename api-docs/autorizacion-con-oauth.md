@@ -21,31 +21,25 @@ Una vez que la demos de alta, te proveeremos de los siguientes datos:
 
 Como primer paso, deberás redirigir al usuario a la siguiente URL, para que pueda autorizar el acceso a la aplicación.
 
-{% swagger method="get" path="/oauth/authorize" baseUrl="" summary="Obtención del código de autorización" %}
-{% swagger-description %}
-Obtener un código de autorización.
-{% endswagger-description %}
+## Obtención del código de autorización
 
-{% swagger-parameter in="query" name="response_type" required="true" %}
-Debe ser "code"
-{% endswagger-parameter %}
+<mark style="color:blue;">`GET`</mark> `/oauth/authorize` (No lleva el prefijo v2 en este endpoint)
 
-{% swagger-parameter in="query" name="client_id" required="true" %}
-El client\_id de la app del marketplace
-{% endswagger-parameter %}
+Redirige al usuario a la URL para que pueda dar a tu aplicación permiso de acceder a su cuenta. En caso afirmativo, volverá a tu URL de callback con un código de autorización, necesario para canjear luego por un token.
 
-{% swagger-parameter in="query" name="redirect_uri" required="true" %}
-La URL de redirección, debe estar autorizada previamente
-{% endswagger-parameter %}
+#### Query Parameters
 
-{% swagger-parameter in="query" name="state" required="true" %}
-String generado en el momento que luego deberás usar para validar el código. Se recomienda guardarlo en la sesión del usuario.
-{% endswagger-parameter %}
+| Name                                             | Type   | Description                                                                                                                                                                                                               |
+| ------------------------------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| response\_type<mark style="color:red;">\*</mark> | String | Debe ser `code`                                                                                                                                                                                                           |
+| client\_id<mark style="color:red;">\*</mark>     | String | El `client_id` de la app del marketplace                                                                                                                                                                                  |
+| redirect\_uri<mark style="color:red;">\*</mark>  | String | La URL de redirección, debe estar autorizada previamente                                                                                                                                                                  |
+| scope<mark style="color:red;">\*</mark>          | String | <p>Se deben indicar los permisos requeridos (separados por coma), o utilizar * para todos los permisos posibles.<br><a href="autorizacion-con-oauth.md#permisos-disponibles-para-solicitar-en-scope">Ver permisos</a></p> |
+| state<mark style="color:red;">\*</mark>          | String | String generado en el momento que luego deberás usar para validar el código. Se recomienda guardarlo en la sesión del usuario.                                                                                            |
 
-{% swagger-parameter in="query" name="scope" required="false" %}
-Se deben indicar los permisos requeridos, o utilizar \* para todos los permisos posibles.
-{% endswagger-parameter %}
-{% endswagger %}
+Ejemplo:
+
+`https://api.zippin.com.ar/oauth/authorize?response_type=code&client_id=9cdnd3-d3d3d-er3gfre43-e2e2e&scope=*&state=32323231&redirect_uri=https://misitio.com/zippin/callback`
 
 Si el usuario autorizó el acceso, volverá a la URL especificada como redirect\_uri, incluyendo un `code` en el query string.
 
@@ -53,37 +47,38 @@ Si el usuario autorizó el acceso, volverá a la URL especificada como redirect\
 
 #### Valida el state
 
-Antes de canjear el código recibido por un token, debería validar que el state recibido en la URL coincida con el que habías enviado en el paso anterior. Si no coincide, deberías anular el flujo.
+Antes de canjear el código recibido por un token, deberías validar que el state recibido en la URL coincida con el que habías enviado en el paso anterior. Si no coincide, deberías anular el flujo.
 
 #### Canjea el código por un token
 
-{% swagger method="post" path="/oauth/token" baseUrl="" summary="Obtención del access token" %}
-{% swagger-description %}
+## Obtención del access token
+
+<mark style="color:green;">`POST`</mark> `/oauth/token` (No lleva el prefijo v2 en este endpoint)
+
 Canjear un código de autorización por un access token
-{% endswagger-description %}
 
-{% swagger-parameter in="query" name="grant_type" required="true" %}
-Debe ser "authorization\_code"
-{% endswagger-parameter %}
+#### Query Parameters
 
-{% swagger-parameter in="query" name="client_id" required="true" %}
-El client\_id de la app del marketplace
-{% endswagger-parameter %}
-
-{% swagger-parameter in="query" name="client_secret" %}
-El client\_secret de la app del marketplace
-{% endswagger-parameter %}
-
-{% swagger-parameter in="query" name="redirect_uri" required="true" %}
-La URL de callback, debe estar autorizada previamente
-{% endswagger-parameter %}
-
-{% swagger-parameter in="query" name="code" required="true" %}
-Envía el código obtenido previamente.
-{% endswagger-parameter %}
-{% endswagger %}
+| Name                                             | Type   | Description                                           |
+| ------------------------------------------------ | ------ | ----------------------------------------------------- |
+| grant\_type<mark style="color:red;">\*</mark>    | String | Debe ser `authorization_code`                         |
+| client\_id<mark style="color:red;">\*</mark>     | String | El `client_id` de la app                              |
+| redirect\_uri<mark style="color:red;">\*</mark>  | String | La URL de callback, debe estar autorizada previamente |
+| code<mark style="color:red;">\*</mark>           | String | Envía el código obtenido previamente.                 |
+| client\_secret<mark style="color:red;">\*</mark> | String | El `client_secret` de la app                          |
 
 Como resultado del request anterior obtendrás un json conteniendo un `access_token`, un `refresh_token` y un atributo `expires_in`, que expresa la cantidad de segundos hasta que expire el token recibido.
+
+#### Respuesta Ejemplo
+
+```json
+{
+	"token_type": "Bearer",
+	"expires_in": 31536000,
+	"access_token": "eyJ0eXAiOiJ2329scsd9bGciOiJSUzI1NiJ9.eyJhdWQiOiI5YzVkMzQwskdm399OTAxNWUzOTkiLCJqdGkiOiJjNTliOWE5NG",
+	"refresh_token": "def502005b186b4a8762ee98bd64aff4aab2a2ee6c8917777d5d5e5733e36fcc2989eae43f38d12c6b19b0f0ac97aa218"
+}
+```
 
 ### Paso 3: Utilizar el token para los requests a la API
 
@@ -100,28 +95,39 @@ https://api.zippin.com.xx/v2/shipments \
 
 ### Paso 4: Refrescar el token
 
-Si bien los tokens tienen una larga duración, tienen un vencimiento, lo que implica que será necesario refrescarlos periódicamente para obtener un nuevo token.
+Si bien los tokens tienen una larga duración, **tienen un vencimiento** (un año, inicialmente), lo que implica que será necesario refrescarlos periódicamente para obtener un nuevo token.
 
-{% swagger method="post" path="/oauth/token" baseUrl="" summary="Refrescar access token" %}
-{% swagger-description %}
+## Refrescar access token
+
+<mark style="color:green;">`POST`</mark> `/oauth/token` (No lleva el prefijo v2 en este endpoint)
+
 Canjear un código de autorización por un access token
-{% endswagger-description %}
 
-{% swagger-parameter in="query" name="grant_type" required="true" %}
-Debe ser **`refresh_token`**
-{% endswagger-parameter %}
+#### Query Parameters
 
-{% swagger-parameter in="query" name="client_id" required="true" %}
-El client\_id de la app del marketplace
-{% endswagger-parameter %}
-
-{% swagger-parameter in="query" name="client_secret" %}
-El client\_secret de la app del marketplace
-{% endswagger-parameter %}
-
-{% swagger-parameter in="query" name="refresh_token" required="true" %}
-Envía el refresh\_token recibido previamente.
-{% endswagger-parameter %}
-{% endswagger %}
+| Name                                             | Type   | Description                                    |
+| ------------------------------------------------ | ------ | ---------------------------------------------- |
+| grant\_type<mark style="color:red;">\*</mark>    | String | Debe ser **`refresh_token`**                   |
+| client\_id<mark style="color:red;">\*</mark>     | String | El `client_id` de la app                       |
+| refresh\_token<mark style="color:red;">\*</mark> | String | Envía el `refresh_token` recibido previamente. |
+| client\_secret                                   | String | El `client_secret` de la app                   |
 
 Como resultado del request anterior volverás a obtener un json conteniendo un nuevo `access_token`, un `refresh_token` y un atributo `expires_in`, que expresa la cantidad de segundos hasta que expire el token recibido.
+
+## Permisos disponibles para solicitar en `scope`
+
+| Permiso                          | Descripción                       |
+| -------------------------------- | --------------------------------- |
+| **Envíos**                       |                                   |
+| shipments.quote                  | Cotizar envíos                    |
+| shipments.create                 | Crear envíos                      |
+| shipment\_documentation.download | Descargar documentación del envío |
+| deliveries.show                  | Buscar/ver envíos                 |
+| deliveries.update                | Actualizar envíos                 |
+| **Cuenta y Orígenes**            |                                   |
+| accounts.show                    | Ver info de la cuenta             |
+| addresses.show                   | Ver orígenes                      |
+| addresses.create                 | Crear origen                      |
+| addresses.destroy                | Eliminar origenes                 |
+| **Fulfillment**                  |                                   |
+| stocks.read                      | Ver stocks                        |
