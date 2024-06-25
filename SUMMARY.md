@@ -7,12 +7,14 @@
 * [URLs y Autenticación](api-docs/urls-y-autenticacion.md)
 * [Límites de requests](api-docs/limites-de-requests.md)
 * [Autorización con oAuth](api-docs/autorizacion-con-oauth.md)
-* [Recursos API](api-docs/recursos-api/README.md)
-  * [Cotizar y Crear Envíos](api-docs/recursos-api/cotizar-y-crear-envios.md)
-  * [Administrar envíos](api-docs/recursos-api/administrar-envios.md)
-  * [Configuración](api-docs/recursos-api/configuracion.md)
-  * [Inventario](api-docs/recursos-api/inventario.md)
-  * [Ubicaciones](api-docs/recursos-api/ubicaciones.md)
+
+## Recursos API
+
+* [Cotizar y Crear Envíos](recursos-api/cotizar-y-crear-envios.md)
+* [Administrar envíos](recursos-api/administrar-envios.md)
+* [Inventario](recursos-api/inventario.md)
+* [Configuración](recursos-api/configuracion.md)
+* [Ubicaciones](recursos-api/ubicaciones.md)
 
 ## Marketplaces
 

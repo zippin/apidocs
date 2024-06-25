@@ -4,7 +4,7 @@
 
 {% hint style="warning" %}
 Los endpoints de búsqueda y obtención de envíos y tracking utilizan **rate limiting** :yellow\_circle:<mark style="color:yellow;">**Bajo**</mark>\
-[Ver más sobre límites de requests](../limites-de-requests.md)
+[Ver más sobre límites de requests](../api-docs/limites-de-requests.md)
 {% endhint %}
 
 ### Listado/búsqueda de envíos
@@ -17,14 +17,14 @@ Obtiene un listado de envíos. Se pueden aplicar filtros sobre distintos campos.
 
 #### Query Parameters
 
-| Name          | Type   | Description                                                                                                                                                                                            |
-| ------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| account\_id   | int    | <p>Filtrar envíos de una cuenta por ID.</p><p>Ejemplo: <mark style="color:red;"><code>account_id=2</code></mark></p>                                                                                   |
-| external\_id  | string | <p>Filtrar envíos por su ID Externo</p><p>Ejemplo: <mark style="color:red;"><code>external_id=DJDSJCMR</code></mark></p>                                                                               |
-| service\_type | string | <p>Filtrar envíos por su tipo de servicio.</p><p>Ejemplo: <mark style="color:red;"><code>service_type=standard_delivery</code></mark></p>                                                              |
-| status        | string | <p>Filtrar envíos por su estado actual.</p><p>Ejemplo: <mark style="color:red;"><code>status=delivered</code></mark></p><p><a href="../../referencia/estados-de-envio.md">Ver estados posibles</a></p> |
-| origin\_id    | int    | <p>Filtrar envíos de un origen por ID.</p><p>Ejemplo: <mark style="color:red;"><code>origin_id=32</code></mark></p>                                                                                    |
-| order\_id     | string | <p>Filtrar envíos por el ID visible de una venta relacionada de un canal integrada.<br>Ejemplo: <mark style="color:red;"><code>order_id=200000334445566</code></mark></p>                              |
+| Name          | Type   | Description                                                                                                                                                                                         |
+| ------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| account\_id   | int    | <p>Filtrar envíos de una cuenta por ID.</p><p>Ejemplo: <mark style="color:red;"><code>account_id=2</code></mark></p>                                                                                |
+| external\_id  | string | <p>Filtrar envíos por su ID Externo</p><p>Ejemplo: <mark style="color:red;"><code>external_id=DJDSJCMR</code></mark></p>                                                                            |
+| service\_type | string | <p>Filtrar envíos por su tipo de servicio.</p><p>Ejemplo: <mark style="color:red;"><code>service_type=standard_delivery</code></mark></p>                                                           |
+| status        | string | <p>Filtrar envíos por su estado actual.</p><p>Ejemplo: <mark style="color:red;"><code>status=delivered</code></mark></p><p><a href="../referencia/estados-de-envio.md">Ver estados posibles</a></p> |
+| origin\_id    | int    | <p>Filtrar envíos de un origen por ID.</p><p>Ejemplo: <mark style="color:red;"><code>origin_id=32</code></mark></p>                                                                                 |
+| order\_id     | string | <p>Filtrar envíos por el ID visible de una venta relacionada de un canal integrada.<br>Ejemplo: <mark style="color:red;"><code>order_id=200000334445566</code></mark></p>                           |
 
 {% tabs %}
 {% tab title="200 Listado de resultados" %}

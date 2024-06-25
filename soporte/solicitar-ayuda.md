@@ -10,4 +10,3 @@ En Zippin tenemos un equipo para ayudarte con la integración. Podemos responder
 
 Para contactarte con nuestro equipo de integraciones [inicia un caso de ayuda](https://share.hsforms.com/1ECZYYnsBR\_Kg8c6HudDNrw45k4k).
 
-****

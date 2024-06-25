@@ -24,7 +24,7 @@ Antes de comenzar ten en cuenta cómo debes autenticarte y construir las URLs.
 
 Luego, podrás comenzar a interactuar con los distintos recursos de la API. En esta sección podrás aprender todo sobre ellos.
 
-{% content-ref url="api-docs/recursos-api/" %}
-[recursos-api](api-docs/recursos-api/)
+{% content-ref url="broken-reference" %}
+[Broken link](broken-reference)
 {% endcontent-ref %}
 

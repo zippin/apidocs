@@ -2,32 +2,21 @@
 
 ## SKUs
 
-{% swagger method="get" path="/inventory/search" baseUrl="/v2" summary="Listar SKUs" %}
-{% swagger-description %}
+## Listar SKUs
 
-{% endswagger-description %}
+<mark style="color:blue;">`GET`</mark> `/v2/inventory/search`
 
-{% swagger-parameter in="query" name="account_id" type="int" %}
-ID de la cuenta
-{% endswagger-parameter %}
+#### Query Parameters
 
-{% swagger-parameter in="query" name="sku" type="string" %}
+| Name           | Type   | Description                                                                                           |
+| -------------- | ------ | ----------------------------------------------------------------------------------------------------- |
+| account\_id    | int    | ID de la cuenta                                                                                       |
+| sku            | string |                                                                                                       |
+| barcode        | string |                                                                                                       |
+| classification | int    | ID de clasificación. Ver [Clasificaciones de producto](../referencia/clasificaciones-de-producto.md). |
 
-{% endswagger-parameter %}
-
-{% swagger-parameter in="query" name="barcode" type="string" %}
-
-{% endswagger-parameter %}
-
-{% swagger-parameter in="query" name="classification" type="int" %}
-ID de clasificación. Ver 
-
-[Clasificaciones de producto](../../referencia/clasificaciones-de-producto.md)
-
-.
-{% endswagger-parameter %}
-
-{% swagger-response status="200: OK" description="" %}
+{% tabs %}
+{% tab title="200: OK " %}
 ```javascript
 {
     "data": [
@@ -99,19 +88,23 @@ ID de clasificación. Ver
     }
 }
 ```
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
 
-{% swagger method="get" path="/inventory/{sku_id}" baseUrl="/v2" summary="Detalle de un SKU" %}
-{% swagger-description %}
+## Detalle de un SKU
+
+<mark style="color:blue;">`GET`</mark> `/v2/inventory/{sku_id}`
+
 Obtiene un detalle de stock por cada almacén en el que hayan existencias.
-{% endswagger-description %}
 
-{% swagger-parameter in="path" name="sku_id" type="int" required="true" %}
-ID del sku
-{% endswagger-parameter %}
+#### Path Parameters
 
-{% swagger-response status="200: OK" description="" %}
+| Name                                      | Type | Description |
+| ----------------------------------------- | ---- | ----------- |
+| sku\_id<mark style="color:red;">\*</mark> | int  | ID del sku  |
+
+{% tabs %}
+{% tab title="200: OK " %}
 ```javascript
 {
     "id": 9737,
@@ -139,33 +132,29 @@ ID del sku
     ]
 }
 ```
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
 
-{% swagger method="get" path="/inventory/{sku_id}/movements" baseUrl="/v2" summary="Movimientos de inventario" %}
-{% swagger-description %}
+## Movimientos de inventario
 
-{% endswagger-description %}
+<mark style="color:blue;">`GET`</mark> `/v2/inventory/{sku_id}/movements`
 
-{% swagger-parameter in="path" name="sku_id" type="int" required="true" %}
-ID del SKU
-{% endswagger-parameter %}
+#### Path Parameters
 
-{% swagger-parameter in="query" name="warehouse" type="int" %}
-Codigo de almacen. Ej. 
+| Name                                      | Type | Description |
+| ----------------------------------------- | ---- | ----------- |
+| sku\_id<mark style="color:red;">\*</mark> | int  | ID del SKU  |
 
-`ba-2`
-{% endswagger-parameter %}
+#### Query Parameters
 
-{% swagger-parameter in="query" name="date_from" type="yyyy-mm-dd" %}
-Fecha de inicio para el filtrado de movimientos. Si se omite, el default es 180 días atrás.
-{% endswagger-parameter %}
+| Name       | Type       | Description                                                                                 |
+| ---------- | ---------- | ------------------------------------------------------------------------------------------- |
+| warehouse  | int        | Codigo de almacen. Ej. `ba-2`                                                               |
+| date\_from | yyyy-mm-dd | Fecha de inicio para el filtrado de movimientos. Si se omite, el default es 180 días atrás. |
+| date\_to   | yyyy-mm-dd | Fecha de fin para el filtrado de movimientos. Por default es hoy.                           |
 
-{% swagger-parameter in="query" name="date_to" type="yyyy-mm-dd" %}
-Fecha de fin para el filtrado de movimientos. Por default es hoy.
-{% endswagger-parameter %}
-
-{% swagger-response status="200: OK" description="" %}
+{% tabs %}
+{% tab title="200: OK " %}
 ```javascript
 {
     "data": [
@@ -221,5 +210,5 @@ Fecha de fin para el filtrado de movimientos. Por default es hoy.
     }
 }
 ```
-{% endswagger-response %}
-{% endswagger %}
+{% endtab %}
+{% endtabs %}
