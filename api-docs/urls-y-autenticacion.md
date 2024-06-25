@@ -6,8 +6,9 @@ Todos los requests deben utilizar autenticación.&#x20;
 
 Existen actualmente dos métodos de autenticarse:
 
+* <mark style="color:green;background-color:green;">**RECOMENDADO**</mark>\
+  Mediante un access\_token, obtenido a través de un flujo de Oauth2
 * Autenticación básica HTTP usando un API token y API secret, generados en la cuenta a la que se quiere acceder.
-* Mediante un access\_token, obtenido a través de un flujo de Oauth2.
 
 ### Generación de credenciales para autenticación básica
 
@@ -66,6 +67,10 @@ Donde:
   * Es el que indica la documentación. Por ejemplo: `shipments`
 
 Ejemplo de la URL: **https://api.**<mark style="color:purple;">**zippin.com.ar**</mark>**/**<mark style="color:orange;">**v2**</mark>**/**<mark style="color:red;">**shipments**</mark>&#x20;
+
+{% hint style="warning" %}
+Los endpoints de [autenticación oAuth](autorizacion-con-oauth.md) no utilizan el prefijo de versión.
+{% endhint %}
 
 ## Ejemplo de request CURL
 

@@ -2,11 +2,11 @@
 
 * [Conecta tu tienda a Zippin](README.md)
 
-## API Docs
+## Principios <a href="#api-docs" id="api-docs"></a>
 
 * [URLs y Autenticación](api-docs/urls-y-autenticacion.md)
-* [Límites de requests](api-docs/limites-de-requests.md)
 * [Autorización con oAuth](api-docs/autorizacion-con-oauth.md)
+* [Límites de requests](api-docs/limites-de-requests.md)
 
 ## Recursos API
 
