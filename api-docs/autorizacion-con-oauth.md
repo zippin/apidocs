@@ -29,17 +29,17 @@ Redirige al usuario a la URL para que pueda dar a tu aplicación permiso de acce
 
 #### Query Parameters
 
-| Name                                             | Type   | Description                                                                                                                                                                                                               |
-| ------------------------------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| response\_type<mark style="color:red;">\*</mark> | String | Debe ser `code`                                                                                                                                                                                                           |
-| client\_id<mark style="color:red;">\*</mark>     | String | El `client_id` de la app del marketplace                                                                                                                                                                                  |
-| redirect\_uri<mark style="color:red;">\*</mark>  | String | La URL de redirección, debe estar autorizada previamente                                                                                                                                                                  |
-| scope<mark style="color:red;">\*</mark>          | String | <p>Se deben indicar los permisos requeridos (separados por coma), o utilizar * para todos los permisos posibles.<br><a href="autorizacion-con-oauth.md#permisos-disponibles-para-solicitar-en-scope">Ver permisos</a></p> |
-| state<mark style="color:red;">\*</mark>          | String | String generado en el momento que luego deberás usar para validar el código. Se recomienda guardarlo en la sesión del usuario.                                                                                            |
+| Name                                             | Type   | Description                                                                                                                                                                               |
+| ------------------------------------------------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| response\_type<mark style="color:red;">\*</mark> | String | Debe ser `code`                                                                                                                                                                           |
+| client\_id<mark style="color:red;">\*</mark>     | String | El `client_id` de la app del marketplace                                                                                                                                                  |
+| redirect\_uri<mark style="color:red;">\*</mark>  | String | La URL de redirección, debe estar autorizada previamente                                                                                                                                  |
+| scope<mark style="color:red;">\*</mark>          | String | <p>Se deben indicar explicitamente los permisos requeridos (separados por coma).<br><a href="autorizacion-con-oauth.md#permisos-disponibles-para-solicitar-en-scope">Ver permisos</a></p> |
+| state<mark style="color:red;">\*</mark>          | String | String generado en el momento que luego deberás usar para validar el código. Se recomienda guardarlo en la sesión del usuario.                                                            |
 
 Ejemplo:
 
-`https://api.zippin.com.ar/oauth/authorize?response_type=code&client_id=9cdnd3-d3d3d-er3gfre43-e2e2e&scope=*&state=32323231&redirect_uri=https://misitio.com/zippin/callback`
+`https://api.zippin.com.ar/oauth/authorize?response_type=code&client_id=9cdnd3-d3d3d-er3gfre43-e2e2e&scope=shipments.quote,shipments.create&state=32323231&redirect_uri=https://misitio.com/zippin/callback`
 
 Si el usuario autorizó el acceso, volverá a la URL especificada como redirect\_uri, incluyendo un `code` en el query string.
 
