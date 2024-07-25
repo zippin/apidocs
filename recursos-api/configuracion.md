@@ -6,6 +6,188 @@ description: >-
 
 # Configuración
 
+## Cuentas
+
+Revisa la información de las cuentas a las que tienes acceso.
+
+<mark style="color:blue;">`GET`</mark> `/v2/accounts`
+
+{% tabs %}
+{% tab title="200: OK " %}
+```javascript
+{
+	"data": [
+		{
+			"id": 2,
+			"name": "Demo",
+			"logo": null,
+			"company_name": "Zippin",
+			"address": {
+				"address": "Calle 24",
+				"city": {
+					"id": 1,
+					"name": "Capital Federal"
+				},
+				"state": "Capital Federal",
+				"zipcode": "1200"
+			},
+			"national_tax_id": {
+				"number": "30-99925367-5",
+				"type": "CUIT"
+			},
+			"state_tax_id": "Buenos Aires",
+			"tax_category": "Responsable Inscripto",
+			"email": "main-email@domain.com.ar",
+			"phone": "-",
+			"contacts": {
+				"operations": {
+					"name": null,
+					"email": null,
+					"phone": null
+				},
+				"administrative": {
+					"name": "Jose Noguera",
+					"email": "jose.noguera@zippin.com.ar",
+					"phone": null
+				}
+			}
+		},
+		{
+			"id": 11876,
+			"name": "My Testing APP",
+			"logo": null,
+			"company_name": "Envios de Prueba SRL",
+			"address": {
+				"address": "Luna 124",
+				"city": {
+					"id": 27,
+					"name": "Parque Patricios"
+				},
+				"state": "Capital Federal",
+				"zipcode": "1437"
+			},
+			"national_tax_id": {
+				"number": "20-22222222-3",
+				"type": "CUIT"
+			},
+			"state_tax_id": null,
+			"tax_category": "Responsable Inscripto",
+			"email": "test@zippin.com.ar",
+			"phone": "222222",
+			"contacts": {
+				"operations": {
+					"name": null,
+					"email": null,
+					"phone": null
+				},
+				"administrative": {
+					"name": null,
+					"email": null,
+					"phone": null
+				}
+			}
+		}
+	],
+	"links": {
+		"first": "http:\/\/api.zippin.local.ar\/v2\/accounts?page=1",
+		"last": "http:\/\/api.zippin.local.ar\/v2\/accounts?page=1",
+		"prev": null,
+		"next": null
+	},
+	"meta": {
+		"current_page": 1,
+		"from": 1,
+		"last_page": 1,
+		"links": [
+			{
+				"url": null,
+				"label": "&laquo; Previous",
+				"active": false
+			},
+			{
+				"url": "https:\/\/api.zippin.com.ar\/v2\/accounts?page=1",
+				"label": "1",
+				"active": true
+			},
+			{
+				"url": null,
+				"label": "Next &raquo;",
+				"active": false
+			}
+		],
+		"path": "https:\/\/api.zippin.com.ar\/v2\/accounts",
+		"per_page": 20,
+		"to": 2,
+		"total": 2
+	}
+}
+```
+
+
+{% endtab %}
+{% endtabs %}
+
+## Detalle de un orígen
+
+<mark style="color:blue;">`GET`</mark> `/v2/addresses/{id}`
+
+Obtiene el detalle de un origen.
+
+#### Path Parameters
+
+| Name                                 | Type | Description   |
+| ------------------------------------ | ---- | ------------- |
+| id<mark style="color:red;">\*</mark> | int  | ID del origen |
+
+{% tabs %}
+{% tab title="200: OK " %}
+```javascript
+{
+    "id": 450,
+    "name": "Direccion editada",
+    "document": "20-3226766-6",
+    "street": "Av Avellaneda",
+    "street_number": "4055",
+    "street_extras": "Local 34",
+    "city": {
+        "id": 1729,
+        "name": "San Fernando"
+    },
+    "state": {
+        "id": 2,
+        "name": "Buenos Aires"
+    },
+    "zipcode": "1646",
+    "phone": "1561222280",
+    "email": "ejemplo@tienda.com.ar",
+    "hours": {
+        "open": "08:00",
+        "close": "16:00"
+    },
+    "dropoff_only": false,
+    "accounts": [
+        {
+            "id": 70,
+            "name": "Tienda Local San Fernando",
+            "options": {
+                "automatic_status_change": true,
+                "pickup_days": [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                ],
+                "preparation_time": null,
+                "use_preparation_time": false
+            }
+        }
+    ]
+}
+```
+{% endtab %}
+{% endtabs %}
+
 ## Orígenes
 
 A la hora de crear un envío es obligatorio indicar el origen del mismo. Los orígenes se dan de alta en la cuenta de cada vendedor.
@@ -302,6 +484,39 @@ Actualmente, los tópicos a los que te puedes suscribir son:
 * `account`: Se dispara cuando hay una modificación en los datos o preferencias de una cuenta&#x20;
 * `account_balance`: Se dispara cuando hay un cambio en el saldo de la cuenta
 * `stock`: Se dispara cuando hay un cambio en el stock de un SKU
+
+### Ejemplos del contenido de los Webhooks
+
+{% code title="status" %}
+```json
+{
+   "topic":"status",
+   "timestamp":"2024-03-08T18:56:34+00:00",
+   "data":{
+      "account_id":11600,
+      "shipment_id":3850099,
+      "external_id":"test-1709820269",
+      "status":"Pendiente de preparacion",
+      "status_code":"documentation_ready",
+      "direction":"forward"
+   }
+}
+```
+{% endcode %}
+
+{% code title="shipment" overflow="wrap" %}
+```json
+{
+   "topic":"shipment",
+   "timestamp":"2024-03-08T18:56:34+00:00",
+   "data":{
+      "account_id":11600,
+      "shipment_id":3850099,
+      "external_id":"test-1709820269"
+   }
+}
+```
+{% endcode %}
 
 ## Listar Webhooks
 
