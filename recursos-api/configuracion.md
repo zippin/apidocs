@@ -127,72 +127,11 @@ Revisa la información de las cuentas a las que tienes acceso.
 {% endtab %}
 {% endtabs %}
 
-## Detalle de un orígen
-
-<mark style="color:blue;">`GET`</mark> `/v2/addresses/{id}`
-
-Obtiene el detalle de un origen.
-
-#### Path Parameters
-
-| Name                                 | Type | Description   |
-| ------------------------------------ | ---- | ------------- |
-| id<mark style="color:red;">\*</mark> | int  | ID del origen |
-
-{% tabs %}
-{% tab title="200: OK " %}
-```javascript
-{
-    "id": 450,
-    "name": "Direccion editada",
-    "document": "20-3226766-6",
-    "street": "Av Avellaneda",
-    "street_number": "4055",
-    "street_extras": "Local 34",
-    "city": {
-        "id": 1729,
-        "name": "San Fernando"
-    },
-    "state": {
-        "id": 2,
-        "name": "Buenos Aires"
-    },
-    "zipcode": "1646",
-    "phone": "1561222280",
-    "email": "ejemplo@tienda.com.ar",
-    "hours": {
-        "open": "08:00",
-        "close": "16:00"
-    },
-    "dropoff_only": false,
-    "accounts": [
-        {
-            "id": 70,
-            "name": "Tienda Local San Fernando",
-            "options": {
-                "automatic_status_change": true,
-                "pickup_days": [
-                    "1",
-                    "2",
-                    "3",
-                    "4",
-                    "5"
-                ],
-                "preparation_time": null,
-                "use_preparation_time": false
-            }
-        }
-    ]
-}
-```
-{% endtab %}
-{% endtabs %}
-
 ## Orígenes
 
 A la hora de crear un envío es obligatorio indicar el origen del mismo. Los orígenes se dan de alta en la cuenta de cada vendedor.
 
-## Listar orígenes
+### Listar orígenes
 
 <mark style="color:blue;">`GET`</mark> `/v2/addresses`
 
@@ -275,7 +214,7 @@ A la hora de crear un envío es obligatorio indicar el origen del mismo. Los or�
 {% endtab %}
 {% endtabs %}
 
-## Detalle de un orígen
+### Detalle de un orígen
 
 <mark style="color:blue;">`GET`</mark> `/v2/addresses/{id}`
 
@@ -336,7 +275,7 @@ Obtiene el detalle de un origen.
 {% endtab %}
 {% endtabs %}
 
-## Crear orígen
+### Crear orígen
 
 <mark style="color:green;">`POST`</mark> `/v2/addresses`
 
@@ -405,7 +344,7 @@ Obtiene el detalle de un origen.
 {% endtab %}
 {% endtabs %}
 
-## Modificar orígen
+### Modificar orígen
 
 <mark style="color:orange;">`PUT`</mark> `/v2/addresses/{id}`
 
@@ -485,7 +424,7 @@ Actualmente, los tópicos a los que te puedes suscribir son:
 * `account_balance`: Se dispara cuando hay un cambio en el saldo de la cuenta
 * `stock`: Se dispara cuando hay un cambio en el stock de un SKU
 
-### Ejemplos del contenido de los Webhooks
+#### Ejemplos del contenido de los Webhooks
 
 {% code title="status" %}
 ```json
@@ -518,7 +457,7 @@ Actualmente, los tópicos a los que te puedes suscribir son:
 ```
 {% endcode %}
 
-## Listar Webhooks
+### Listar Webhooks
 
 <mark style="color:blue;">`GET`</mark> `/v2/accounts/{account_id}/webhooks`
 
@@ -560,7 +499,7 @@ Actualmente, los tópicos a los que te puedes suscribir son:
 {% endtab %}
 {% endtabs %}
 
-## Suscribir a webhook
+### Suscribir a webhook
 
 <mark style="color:green;">`POST`</mark> `/v2/accounts/{account_id}/webhooks`
 
@@ -587,7 +526,7 @@ Actualmente, los tópicos a los que te puedes suscribir son:
 {% endtab %}
 {% endtabs %}
 
-## Actualizar URL
+### Actualizar URL
 
 <mark style="color:orange;">`PUT`</mark> `/v2/accounts/{account_id}/webhooks/{id}`
 
@@ -614,7 +553,7 @@ Actualmente, los tópicos a los que te puedes suscribir son:
 {% endtab %}
 {% endtabs %}
 
-## Desuscribir de un webhook
+### Desuscribir de un webhook
 
 <mark style="color:red;">`DELETE`</mark> `/v2/accounts/{account_id}/webhooks/{id}`
 
