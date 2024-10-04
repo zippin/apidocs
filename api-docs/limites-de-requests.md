@@ -19,7 +19,13 @@ Cuando hagas requests a un endpoint limitado, notarás que aparecen los siguient
 * `X-RateLimit-Limit` indica el límite de requests para el endpoint.
 * `X-RateLimit-Remaining` indica cuántos requests disponibles tienes actualmente.
 
-Si consumieras todos los requests permitidos en el minuto, verás que aparecen otros headers adicionales en la respuesta:
+Si consumieras todos los requests permitidos en el minuto, **la API te devolverá un error HTTP con código **_**429: Too Many Requests**_.
+
+Verás que aparecen otros headers adicionales en la respuesta:
 
 * `Retry-After` indica cuantos segundos faltan para que se resetee la disponibilidad de requests.
 * `X-RateLimit-Reset` es un timestamp UNIX de cuándo reseteará la disponibilidad de requests.
+
+Recomendamos que utilices algún método para consumir el retry-after o utilizar backoff exponencial evitar errores en tu integración. Muchos clientes tienen la posibilidad de utilizar middlewares para gestionar esto automáticamente.&#x20;
+
+Por ejemplo, si utilizas PHP y el cliente [Guzzle](https://docs.guzzlephp.org/en/stable/index.html), podrías usar el paquete [este paquete](https://packagist.org/packages/caseyamcl/guzzle\_retry\_middleware).
