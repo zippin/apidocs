@@ -25,4 +25,10 @@ Cuando se realiza el setup inicial de un Marketplace, se debe optar por el modo 
 
 ### Alta de Marketplace
 
-El alta de un marketplace en Zippin implica una serie de configuraciones por parte del equipo técnico en la plataforma. Para dar inicio al proceso, [completa el formulario de alta](https://forms.gle/KPRKamfiXdwVgow6A).
+El alta de un marketplace en Zippin implica una serie de configuraciones por parte del equipo técnico en la plataforma.&#x20;
+
+Para dar inicio al proceso, contactate primero con nuestro equipo comercial:
+
+* [Argentina](https://www.zippin.com.ar/#Contacto)
+* [Chile](https://www.zippin.cl/#Contacto)
+* [México](https://www.zippin.com.mx/#Contacto)
