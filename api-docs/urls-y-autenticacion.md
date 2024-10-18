@@ -6,11 +6,16 @@ Todos los requests deben utilizar autenticación.&#x20;
 
 Existen actualmente dos métodos de autenticarse:
 
-* <mark style="color:green;background-color:green;">**RECOMENDADO**</mark>\
-  Mediante un access\_token, obtenido a través de un flujo de Oauth2
-* Autenticación básica HTTP usando un API token y API secret, generados en la cuenta a la que se quiere acceder.
+| Método                                                                                               | Cuando usar                                                                   | Ejemplos                                                                                                                            |
+| ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| [Autenticación básica HTTP con credenciales de cuenta](urls-y-autenticacion.md#autenticacion-basica) | En una integración exclusiva para una cuenta.                                 | <p>Un desarrollo custom.<br>Una tienda propia.</p>                                                                                  |
+| <p><a href="autorizacion-con-oauth.md">oAuth2 (access_token)</a><br></p>                             | Cuando la integración será usada por múltiples cuentas Zippin independientes. | <p>Marketplaces.</p><p>Sistemas de ecommerce.<br>Productos SaaS multi cliente como gestores de ordenes, productos, etc.<br>ERPs</p> |
 
-### Generación de credenciales para autenticación básica
+### Autenticación básica
+
+Utiliza la autenticación básica HTTP usando un API token y API secret, generados en la cuenta a la que se quiere acceder.
+
+#### Generación de credenciales para autenticación básica
 
 Para generar tus credenciales debes ingresar a la cuenta de Zippin que estás integrando y acceder a la sección **Configuración > Integraciones > Gestionar credenciales y webhooks**
 
@@ -29,7 +34,7 @@ Si la librería que estás usando no acepta que se le indique un usuario y contr
 
 Deberás enviar un Bearer token en cada request. Tendrás un access\_token por cada cuenta de Zippin que te autorice el acceso.
 
-Para ver cómo obtener y refrescar los tokens, revisa la ayuda sobre la autenticación con Oauth2.
+Para ver cómo obtener y refrescar los tokens, revisa la ayuda sobre la [autenticación con Oauth2](autorizacion-con-oauth.md).
 
 ## Headers obligatorios
 
