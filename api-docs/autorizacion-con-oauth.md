@@ -6,11 +6,19 @@ description: >-
 
 # Autorización con oAuth
 
+## Cuándo utilizar la autenticación por oAuth
+
+Recomendamos el uso de este método de autenticación cuando tu integración sirva para conectar múltiples cuentas de Zippin de diferentes clientes.
+
+Si la integración que estás haciendo es para tu propia cuenta Zippin, quizas sea mejor que utilices credenciales simples, como indica [ésta página](urls-y-autenticacion.md).
+
 ## Requisitos
 
 Antes de avanzar con el proceso de autorización, deberás tener una aplicación dada de alta en Zippin. Para obtener tu aplicación, completa el [formulario de alta](https://docs.google.com/forms/d/e/1FAIpQLSdkQDnuTohgHv8chHeX1me-M1QRpVTVADlGtUvWFJwHxIUI7Q/viewform?usp=sf\_link).
 
-Una vez que la demos de alta, te proveeremos de los siguientes datos:
+Deberás informarnos la o las URLs que quieras dar de alta para el callback del proceso de autorización
+
+Una vez que demos de alta la aplicación, te proveeremos de los siguientes datos:
 
 * `client_id`
 * `client_secret`
@@ -23,29 +31,31 @@ Como primer paso, deberás redirigir al usuario a la siguiente URL, para que pue
 
 ## Obtención del código de autorización
 
-<mark style="color:blue;">`GET`</mark> `/oauth/authorize` (No lleva el prefijo v2 en este endpoint)
+Redirige al usuario a la URL <mark style="color:blue;">https://api.zippin.</mark>_<mark style="color:blue;">pais</mark>_<mark style="color:blue;">/oauth/authorize?response\_type=code\&state=XX\&client\_id=ID\&scope=...\&redirect\_uri=URL</mark> (ver a continuación cómo armarla) para que pueda dar a tu aplicación permiso de acceder a su cuenta.&#x20;
 
-Redirige al usuario a la URL para que pueda dar a tu aplicación permiso de acceder a su cuenta. En caso afirmativo, volverá a tu URL de callback con un código de autorización, necesario para canjear luego por un token.
+En caso que el usuario autorice a tu aplicación a acceder a la cuenta, lo redirigiremos a tu URL de callback con un código de autorización, necesario para canjear luego por un token.
 
-#### Query Parameters
+#### Parámetros de la URL de autorización
 
-| Name                                             | Type   | Description                                                                                                                                                                               |
-| ------------------------------------------------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| response\_type<mark style="color:red;">\*</mark> | String | Debe ser `code`                                                                                                                                                                           |
-| client\_id<mark style="color:red;">\*</mark>     | String | El `client_id` de la app del marketplace                                                                                                                                                  |
-| redirect\_uri<mark style="color:red;">\*</mark>  | String | La URL de redirección, debe estar autorizada previamente                                                                                                                                  |
-| scope<mark style="color:red;">\*</mark>          | String | <p>Se deben indicar explicitamente los permisos requeridos (separados por coma).<br><a href="autorizacion-con-oauth.md#permisos-disponibles-para-solicitar-en-scope">Ver permisos</a></p> |
-| state<mark style="color:red;">\*</mark>          | String | String generado en el momento que luego deberás usar para validar el código. Se recomienda guardarlo en la sesión del usuario.                                                            |
+| Name                                             | Type   | Description                                                                                                                                                                                                       |
+| ------------------------------------------------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| response\_type<mark style="color:red;">\*</mark> | String | Debe ser `code`                                                                                                                                                                                                   |
+| client\_id<mark style="color:red;">\*</mark>     | String | El `client_id` de la app del marketplace                                                                                                                                                                          |
+| redirect\_uri<mark style="color:red;">\*</mark>  | String | La URL de redirección, debe estar habilitada previamente en la aplicación al darla de alta.                                                                                                                       |
+| scope<mark style="color:red;">\*</mark>          | String | <p>Se deben indicar explícitamente los permisos requeridos (separados por espacios o comas).<br><a href="autorizacion-con-oauth.md#permisos-disponibles-para-solicitar-en-scope">Ver permisos disponibles</a></p> |
+| state<mark style="color:red;">\*</mark>          | String | String generado en el momento que luego podrás usar para validar el código. Se recomienda guardarlo en la sesión del usuario.                                                                                     |
 
 Ejemplo:
 
-`https://api.zippin.com.ar/oauth/authorize?response_type=code&client_id=9cdnd3-d3d3d-er3gfre43-e2e2e&scope=shipments.quote,shipments.create&state=32323231&redirect_uri=https://misitio.com/zippin/callback`
+`https://api.zippin.com.ar/oauth/authorize?response_type=code&client_id=9c5nd3-dxd3d-er3gfre43-e2e2e&scope=shipments.quote shipments.create&state=32323231&redirect_uri=https://misitio.com/zippin/callback`
 
-Si el usuario autorizó el acceso, volverá a la URL especificada como redirect\_uri, incluyendo un `code` en el query string.
+Si el usuario autorizó el acceso, volverá a la URL especificada como redirect\_uri, incluyendo un `code` en el query string, por ejemplo https://misitio.com/zippin/callback?code=def502000854851...\&state=32323231
 
 ### Paso 2: Validar la autorización y canjear el código por un token
 
 #### Valida el state
+
+Ese paso no es obligatorio, pero es aconsejable para dar mas seguridad al proceso.&#x20;
 
 Antes de canjear el código recibido por un token, deberías validar que el state recibido en la URL coincida con el que habías enviado en el paso anterior. Si no coincide, deberías anular el flujo.
 
@@ -68,6 +78,22 @@ Canjear un código de autorización por un access token
 | client\_secret<mark style="color:red;">\*</mark> | String | El `client_secret` de la app                          |
 
 Como resultado del request anterior obtendrás un json conteniendo un `access_token`, un `refresh_token` y un atributo `expires_in`, que expresa la cantidad de segundos hasta que expire el token recibido.
+
+#### Request Ejemplo
+
+```bash
+curl --request POST \
+  --url https://api.zippin.xx/oauth/token \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"grant_type": "authorization_code",
+	"code": "def502000854851...",
+	"client_id": "9c8f-f139-4cfe-9be1-6e799",
+	"client_secret": "Qzxs7u9WN3GsE24BwNJrWx8VVcvhjZ",
+	"redirect_uri": "https://misitio.com/zippin/callback"
+}'
+
+```
 
 #### Respuesta Ejemplo
 
@@ -120,10 +146,14 @@ Como resultado del request anterior volverás a obtener un json conteniendo un n
 | -------------------------------- | --------------------------------- |
 | **Envíos**                       |                                   |
 | shipments.quote                  | Cotizar envíos                    |
-| shipments.create                 | Crear envíos                      |
+| shipments.create                 | Crear/Actualizar envíos           |
 | shipment\_documentation.download | Descargar documentación del envío |
-| deliveries.show                  | Buscar/ver envíos                 |
-| deliveries.update                | Actualizar envíos                 |
+| shipments.show                   | Buscar/ver envíos                 |
+| shipments.update                 | Actualizar estados de envíos      |
+| **Ordenes**                      |                                   |
+| orders.view                      | Ver Ordenes                       |
+| orders.create                    | Crear ordenes                     |
+| orders.update                    | Actualizar Ordenes                |
 | **Cuenta y Orígenes**            |                                   |
 | accounts.show                    | Ver info de la cuenta             |
 | addresses.show                   | Ver orígenes                      |
