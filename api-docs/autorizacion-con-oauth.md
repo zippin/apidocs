@@ -37,13 +37,13 @@ En caso que el usuario autorice a tu aplicación a acceder a la cuenta, lo redir
 
 #### Parámetros de la URL de autorización
 
-| Name                                             | Type   | Description                                                                                                                                                                                                       |
-| ------------------------------------------------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| response\_type<mark style="color:red;">\*</mark> | String | Debe ser `code`                                                                                                                                                                                                   |
-| client\_id<mark style="color:red;">\*</mark>     | String | El `client_id` de la app del marketplace                                                                                                                                                                          |
-| redirect\_uri<mark style="color:red;">\*</mark>  | String | La URL de redirección, debe estar habilitada previamente en la aplicación al darla de alta.                                                                                                                       |
-| scope<mark style="color:red;">\*</mark>          | String | <p>Se deben indicar explícitamente los permisos requeridos (separados por espacios o comas).<br><a href="autorizacion-con-oauth.md#permisos-disponibles-para-solicitar-en-scope">Ver permisos disponibles</a></p> |
-| state<mark style="color:red;">\*</mark>          | String | String generado en el momento que luego podrás usar para validar el código. Se recomienda guardarlo en la sesión del usuario.                                                                                     |
+| Name                                             | Type   | Description                                                                                                                                                                                                                |
+| ------------------------------------------------ | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| response\_type<mark style="color:red;">\*</mark> | String | Debe ser `code`                                                                                                                                                                                                            |
+| client\_id<mark style="color:red;">\*</mark>     | String | El `client_id` de la app del marketplace                                                                                                                                                                                   |
+| redirect\_uri<mark style="color:red;">\*</mark>  | String | La URL de redirección, debe estar habilitada previamente en la aplicación al darla de alta.                                                                                                                                |
+| scope<mark style="color:red;">\*</mark>          | String | <p>Se deben indicar explícitamente los permisos requeridos (<strong>separados por espacios</strong>).<br><a href="autorizacion-con-oauth.md#permisos-disponibles-para-solicitar-en-scope">Ver permisos disponibles</a></p> |
+| state<mark style="color:red;">\*</mark>          | String | String generado en el momento que luego podrás usar para validar el código. Se recomienda guardarlo en la sesión del usuario.                                                                                              |
 
 Ejemplo:
 
