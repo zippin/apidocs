@@ -8,9 +8,13 @@ description: >-
 
 ## Cuándo utilizar la autenticación por oAuth
 
-Recomendamos el uso de este método de autenticación cuando tu integración sirva para conectar múltiples cuentas de Zippin de diferentes clientes.
+Recomendamos el uso de oAuth cuando tu integración sirva para **conectar múltiples cuentas de Zippin** de diferentes clientes.
 
-Si la integración que estás haciendo es para tu propia cuenta Zippin, quizas sea mejor que utilices credenciales simples, como indica [ésta página](urls-y-autenticacion.md).
+Si la integración que estás realizando es entre un sistema propio y una única cuenta Zippin, te recomendamos usar [credenciales simples de cuenta](urls-y-autenticacion.md).
+
+{% hint style="info" %}
+Utiliza oAuth cuando tu integración se reutilice con múltiples cuentas Zippin.
+{% endhint %}
 
 ## Requisitos
 
@@ -27,11 +31,13 @@ Una vez que demos de alta la aplicación, te proveeremos de los siguientes datos
 
 ### Paso 1: Solicitar código de autorización
 
-Como primer paso, deberás redirigir al usuario a la siguiente URL, para que pueda autorizar el acceso a la aplicación.
+Como primer paso, deberás **redirigir al usuario a la siguiente URL**, para que pueda autorizar el acceso a la aplicación.
 
 #### Obtención del código de autorización
 
 Redirige al usuario a la URL <mark style="color:blue;">https://api.zippin.</mark>_<mark style="color:blue;">pais</mark>_<mark style="color:blue;">/oauth/authorize?response\_type=code\&state=XX\&client\_id=ID\&scope=...\&redirect\_uri=URL</mark> (ver a continuación cómo armarla), para que pueda dar a tu aplicación permiso de acceder a su cuenta.&#x20;
+
+Revisa que la porción del host de [la URL corresponda con la del país de Zippin correcto](urls-y-autenticacion.md).
 
 En caso que el usuario autorice a tu aplicación a acceder a la cuenta, lo redirigiremos a tu URL de redirección con un código de autorización en la URL, necesario para canjear luego por un token.
 
@@ -49,7 +55,7 @@ Ejemplo:
 
 `https://api.zippin.com.ar/oauth/authorize?response_type=code&client_id=9c5nd3-dxd3d-er3gfre43-e2e2e&scope=shipments.quote shipments.create&state=32323231&redirect_uri=https://misitio.com/zippin/callback`
 
-Si el usuario autorizó el acceso, volverá a la URL especificada como redirect\_uri, incluyendo un `code` en el query string, por ejemplo https://misitio.com/zippin/callback?code=def502000854851...\&state=32323231
+Si el usuario autorizó el acceso, volverá a la URL especificada como redirect\_uri, incluyendo un `code` en el query string, por ejemplo: `https://misitio.com/zippin/callback?`**`code=def502000854851`**`...&state=32323231`
 
 ### Paso 2: Validar la autorización y canjear el código por un token
 
