@@ -29,11 +29,11 @@ Una vez que demos de alta la aplicación, te proveeremos de los siguientes datos
 
 Como primer paso, deberás redirigir al usuario a la siguiente URL, para que pueda autorizar el acceso a la aplicación.
 
-## Obtención del código de autorización
+#### Obtención del código de autorización
 
-Redirige al usuario a la URL <mark style="color:blue;">https://api.zippin.</mark>_<mark style="color:blue;">pais</mark>_<mark style="color:blue;">/oauth/authorize?response\_type=code\&state=XX\&client\_id=ID\&scope=...\&redirect\_uri=URL</mark> (ver a continuación cómo armarla) para que pueda dar a tu aplicación permiso de acceder a su cuenta.&#x20;
+Redirige al usuario a la URL <mark style="color:blue;">https://api.zippin.</mark>_<mark style="color:blue;">pais</mark>_<mark style="color:blue;">/oauth/authorize?response\_type=code\&state=XX\&client\_id=ID\&scope=...\&redirect\_uri=URL</mark> (ver a continuación cómo armarla), para que pueda dar a tu aplicación permiso de acceder a su cuenta.&#x20;
 
-En caso que el usuario autorice a tu aplicación a acceder a la cuenta, lo redirigiremos a tu URL de callback con un código de autorización, necesario para canjear luego por un token.
+En caso que el usuario autorice a tu aplicación a acceder a la cuenta, lo redirigiremos a tu URL de redirección con un código de autorización en la URL, necesario para canjear luego por un token.
 
 #### Parámetros de la URL de autorización
 
@@ -59,9 +59,7 @@ Ese paso no es obligatorio, pero es aconsejable para dar mas seguridad al proces
 
 Antes de canjear el código recibido por un token, deberías validar que el state recibido en la URL coincida con el que habías enviado en el paso anterior. Si no coincide, deberías anular el flujo.
 
-#### Canjea el código por un token
-
-## Obtención del access token
+#### Obtención del access token
 
 <mark style="color:green;">`POST`</mark> `/oauth/token` (No lleva el prefijo v2 en este endpoint)
 
@@ -123,24 +121,52 @@ https://api.zippin.com.xx/v2/shipments \
 
 Si bien los tokens tienen una larga duración, **tienen un vencimiento** (un año, inicialmente), lo que implica que será necesario refrescarlos periódicamente para obtener un nuevo token.
 
-## Refrescar access token
+#### Refrescar access token
 
 <mark style="color:green;">`POST`</mark> `/oauth/token` (No lleva el prefijo v2 en este endpoint)
 
 Canjear un código de autorización por un access token
 
-#### Query Parameters
+#### Body Parameters
 
 | Name                                             | Type   | Description                                    |
 | ------------------------------------------------ | ------ | ---------------------------------------------- |
 | grant\_type<mark style="color:red;">\*</mark>    | String | Debe ser **`refresh_token`**                   |
 | client\_id<mark style="color:red;">\*</mark>     | String | El `client_id` de la app                       |
 | refresh\_token<mark style="color:red;">\*</mark> | String | Envía el `refresh_token` recibido previamente. |
-| client\_secret                                   | String | El `client_secret` de la app                   |
+| client\_secret<mark style="color:red;">\*</mark> | String | El `client_secret` de la app                   |
 
 Como resultado del request anterior volverás a obtener un json conteniendo un nuevo `access_token`, un `refresh_token` y un atributo `expires_in`, que expresa la cantidad de segundos hasta que expire el token recibido.
 
+#### Request Ejemplo
+
+```bash
+curl --request POST \
+  --url https://api.zippin.xx/oauth/token \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"grant_type": "refresh_token",
+	"refresh_token": "def502000854851...",
+	"client_id": "9c8f-f139-4cfe-9be1-6e799",
+	"client_secret": "Qzxs7u9WN3GsE24BwNJrWx8VVcvhjZ"
+}'
+
+```
+
+#### Respuesta Ejemplo
+
+```json
+{
+	"token_type": "Bearer",
+	"expires_in": 31536000,
+	"access_token": "eyJ0eXAiOiJ2329scsd9bGciOiJSUzI1NiJ9.eyJhdWQiOiI5YzVkMzQwskdm399OTAxNWUzOTkiLCJqdGkiOiJjNTliOWE5NG",
+	"refresh_token": "def502005b186b4a8762ee98bd64aff4aab2a2ee6c8917777d5d5e5733e36fcc2989eae43f38d12c6b19b0f0ac97aa218"
+}
+```
+
 ## Permisos disponibles para solicitar en `scope`
+
+Recuerda que puedes solicitar múltiples permisos, para ello deberás separar cada uno con un espacio en la URL inicial.
 
 | Permiso                          | Descripción                       |
 | -------------------------------- | --------------------------------- |
