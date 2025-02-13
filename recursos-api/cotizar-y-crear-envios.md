@@ -17,11 +17,11 @@ En los resultados de cotización verás todas las opciones disponibles en tu cue
 Recomendamos completar el atributo `source` con algo que identifique a tu integración, para que luego los clientes puedan definir reglas personalizadas de cotización utilizando el [Motor de Reglas](https://ayuda.zippin.app/automatizaciones), utilizando el atributo source como criterio de filtrado.
 {% endhint %}
 
-#### Cotizar Por Items
+### Cotizar Por Items
 
 Permite obtener opciones de despacho indicando un conjunto de productos a despachar. La API empaquetará los items en paquetes de acuerdo a la lógica definida en la cuenta, y teniendo en cuenta los contenedores configurados.
 
-## Cotización de un envío en base a items (recomendado)
+#### Cotización de un envío en base a items (recomendado)
 
 <mark style="color:green;">`POST`</mark> `/v2/shipments/quote`
 
@@ -141,7 +141,9 @@ Este request te permitirá obtener cotizaciones de envíos indicando los articul
         "price_shipment": 315.79,
         "price_insurance": 8.18,
         "price": 323.97,
-        "price_incl_tax": 392
+        "price_incl_tax": 392,
+        "seller_price": 323.97,
+        "seller_price_incl_tax": 392
       },
       "rate": {
         "source": "tariff",
@@ -179,7 +181,9 @@ Este request te permitirá obtener cotizaciones de envíos indicando los articul
         "price_shipment": 315.79,
         "price_insurance": 8.18,
         "price": 323.97,
-        "price_incl_tax": 392
+        "price_incl_tax": 392,
+        "seller_price": 323.97,
+        "seller_price_incl_tax": 392
       },
       "rate": {
         "source": "tariff",
@@ -403,7 +407,9 @@ Este request te permitirá obtener cotizaciones de envíos indicando explícitam
         "price_shipment": 315.79,
         "price_insurance": 8.18,
         "price": 323.97,
-        "price_incl_tax": 392
+        "price_incl_tax": 392,
+        "seller_price": 323.97,
+        "seller_price_incl_tax": 392
       },
       "rate": {
         "source": "tariff",
@@ -441,7 +447,9 @@ Este request te permitirá obtener cotizaciones de envíos indicando explícitam
         "price_shipment": 315.79,
         "price_insurance": 8.18,
         "price": 323.97,
-        "price_incl_tax": 392
+        "price_incl_tax": 392,
+        "seller_price": 323.97,
+        "seller_price_incl_tax": 392
       },
       "rate": {
         "source": "tariff",
@@ -477,7 +485,9 @@ Este request te permitirá obtener cotizaciones de envíos indicando explícitam
         "price_shipment": 725.7,
         "price_insurance": 8.18,
         "price": 733.88,
-        "price_incl_tax": 888
+        "price_incl_tax": 888,
+        "seller_price": 323.97,
+        "seller_price_incl_tax": 392
       },
       "rate": {
         "source": "tariff",
